@@ -1,0 +1,4600 @@
+@import url("https://fonts.googleapis.com/css2?family=Intel+One+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&text=%C3%A1%C3%A0%C3%A2%C3%A3%C3%A9%C3%AA%C3%AD%C3%B3%C3%B4%C3%B5%C3%BA%C3%A7%C3%81%C3%80%C3%82%C3%83%C3%89%C3%8A%C3%8D%C3%93%C3%94%C3%95%C3%9A%C3%87&display=swap");
+
+/* ==========================================================================
+   StudyFlow - style.css
+   Etapa 3 (somente CSS). Overlays por checkbox + :has() para o tema escuro.
+   Breakpoints: >=1280 desktop | 701-1279 tablet | <=700 celular | <=400 celular pequeno
+   ========================================================================== */
+
+/* ---------- Tokens ---------- */
+:root {
+    --mono: "Intel One Mono", "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --fs: 0.96rem;
+
+    --texto: #4b5755;
+    --acento: #566d6e;
+    
+/* Gradiente dos botões - modo claro */
+--gradiente-botao: linear-gradient(
+    180deg,
+    #566d6e 0%,
+    #87a4a5 100%
+);
+
+    --sobre-acento: #ffffff;
+    --fundo-topo: #EEEEEE;
+    --fundo-base: #A4C3C4;
+    --cartao: #e9ece7;
+    --item: #fdf6ec;
+    --modal-topo: #fdf6ec;
+    --modal-base: #f9f4ea;
+    --pilula: #f3f2ec;
+    --campo: #c6d1d0;
+    --suave: #9fabaa;
+    --seta: #9aa9a9;
+    --linha-input: #5a6563;
+    --hover-dia: rgba(86, 109, 110, 0.14);
+    --bolha-user: #a9c5c6;
+    --texto-user: #3f4b4a;
+    --bolha-ia: #8ba2a2;
+    --texto-ia: #ffffff;
+    --tag-ia: #7f9797;
+    --foco: #2f4a4c;
+    --sombra: 3px 4px 8px rgba(0, 0, 0, 0.2);
+    --sombra-cartao: 0 5px 12px rgba(0, 0, 0, 0.14);
+    --brilho: 2px 3px 4px rgba(0, 0, 0, 0.28);
+}
+
+/* Tema escuro: ativado pelo checkbox #toggle-tema (sem JS) */
+html:has(#toggle-tema:checked) {
+    color-scheme: dark;
+    --texto: #ecd9ea;
+    --acento: #7a6074;
+    --fundo-topo: #000000;
+    --fundo-base: #1a0618;
+    --cartao: #231c20;
+    --item: #131114;
+    --modal-topo: #1d171d;
+    --modal-base: #161216;
+    --pilula: #17121a;
+    --campo: #3a2f38;
+    --suave: #8f8290;
+    --seta: #cdbbca;
+    --linha-input: #d9c6d6;
+    --hover-dia: rgba(236, 217, 234, 0.14);
+    --bolha-user: #5d4a58;
+    --texto-user: #f3e6f1;
+    --bolha-ia: #3a2f38;
+    --texto-ia: #f3e6f1;
+    --tag-ia: #4b3b47;
+    --foco: #f0d4ee;
+    --sombra: none;
+    --sombra-cartao: none;
+    --brilho: 0 0 8px rgba(236, 217, 234, 0.45);
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    font-family: var(--mono);
+    font-size: var(--fs);
+    line-height: 1.4;
+    color: var(--texto);
+    background-color: var(--fundo-base);
+    background-image: linear-gradient(
+    0.52deg,
+    var(--fundo-base) 0.44%,
+    var(--fundo-topo) 59.91%
+);
+    background-attachment: fixed;
+
+}
+
+h1, h2, h3, p, ul {
+    margin: 0;
+}
+
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+button, input, select, textarea {
+    font: inherit;
+    color: inherit;
+}
+
+img, svg {
+    display: block;
+    max-width: 100%;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+:focus-visible {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+}
+
+/* Checkboxes de controle: invisiveis, mas focaveis por teclado */
+.toggle-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ---------- Cabecalho (compartilhado) ---------- */
+#cabecalho,
+#cabecalho-login,
+#cabecalho-editar-perfil {
+    position: relative;
+    z-index: 40;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 55px;
+}
+
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 175px;
+    height: 55px;
+    padding: 0;
+
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+
+    color: rgba(78, 85, 84, 1);
+    text-decoration: none;
+    text-shadow: -4px 5px 4.7px rgba(0, 0, 0, 0.26);
+
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+
+span.logo {
+    cursor: default;
+}
+
+#toggle-menu:checked ~ #cabecalho .logo {
+    background: var(--acento);
+    color: var(--sobre-acento);
+    text-shadow: none;
+}
+
+.cabecalho-acoes {
+    display: flex;
+    gap: 18px;
+    margin: 10px 17px 0 0;
+}
+
+.botao-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 114px;
+    height: 50px;
+    border-radius: 25px;
+    background: var(--pilula);
+    color: var(--texto);
+    box-shadow: var(--sombra);
+    font-size: 0.69rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.botao-cabecalho .icone {
+    display: none;
+    width: 24px;
+    height: 24px;
+}
+
+#toggle-notificacoes:checked ~ #cabecalho label[for="toggle-notificacoes"],
+#toggle-perfil:checked ~ #cabecalho label[for="toggle-perfil"] {
+    height: 55px;
+    border-radius: 25px 25px 0 0;
+    background: var(--acento);
+    color: var(--sobre-acento);
+    box-shadow: none;
+}
+
+/* ---------- Pagina inicial: estrutura ---------- */
+#conteudo-principal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: min(696px, calc(100% - 32px));
+    margin: 0 auto;
+    padding-bottom: 64px;
+}
+
+#secao-principal {
+    padding-top: 46px;
+    text-align: center;
+}
+
+
+
+
+
+
+#secao-principal h1 {
+    width: 100%;
+    max-width: 686px;
+    min-height: 120px;
+    margin: 0 auto 12px;
+    padding: 0;
+
+    font-family: "Intel One Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 48px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-align: center;
+
+    color: rgba(78, 85, 84, 1);
+    text-rendering: optimizeLegibility;
+}
+
+
+
+
+
+
+
+.welcome-text {
+    width: 100%;
+    margin: 0 auto;
+    font-family: "Intel One Mono", monospace;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-align: center;
+    color: rgba(78, 85, 84, 1);
+}
+
+
+
+
+.assistant-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 39px;
+}
+
+.assistant-wrapper > span {
+    display: inline-block;
+   D padding-left: 12px;
+    border-left: 2px solid var(--texto);
+    font-size: var(--fs);
+    line-height: 22px;
+}
+
+.assistant-wrapper > p {
+    max-width: 420px;
+    margin-top: 2px;
+    font-size: var(--fs);
+    line-height: 1.4;
+}
+
+
+.assistant-wrapper input {
+    width: 100%;
+    max-width: 694px;
+    height: 44px;
+    margin-top: 10px;
+    padding: 0 56px;
+    border: 1px solid rgba(87, 108, 109, 0.55);
+    border-radius: 35px;
+    background: rgba(255, 255, 255, 1);
+    color: var(--texto);
+    font-family: "Intel One Mono", monospace;
+    font-size: 12px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+
+.assistant-wrapper input::placeholder,
+.barra-pergunta input::placeholder,
+#form-adicionar-compromisso textarea::placeholder {
+    color: var(--suave);
+    opacity: 1;
+}
+
+/* Texto de exemplo da barra inicial - modo claro */
+html:not(:has(#toggle-tema:checked)) .assistant-wrapper input::placeholder {
+    color: rgba(97, 118, 117, 0.7);
+}
+
+
+.assistant-wrapper input:focus,
+.assistant-wrapper input:focus-visible {
+    outline: none;
+    box-shadow: none;
+    text-decoration: none;
+}
+
+
+/* Seta fica logo apos o placeholder (centralizado), como no Figma */
+.btn-assistant-send {
+    position: absolute;
+    bottom: 15px;
+    left: calc(50% + 20ch + 18px);
+    width: 16px;
+    height: 16px;
+    font-size: 0.77rem;
+    line-height: 16px;
+    text-align: center;
+    color: var(--texto);
+    cursor: pointer;
+    user-select: none;
+}
+
+.assistant-wrapper input:not(:placeholder-shown) {
+    padding-left: 24px;
+    text-align: left;
+}
+
+.assistant-wrapper input:not(:placeholder-shown) ~ .btn-assistant-send {
+    left: auto;
+    right: 22px;
+}
+
+/* ---------- Calendario ---------- */
+#calendario {
+    margin-top: 66px;
+}
+
+.calendario-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 42px;
+    margin-bottom: 8px;
+    padding-left: 17px;
+}
+
+
+.calendario-topo h2 {
+    margin-top: -8px;
+    font-family: "Intel One Mono", monospace;
+    font-size: 24px;
+    font-weight: 600;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0;
+    color: rgba(78, 85, 84, 1);
+}
+
+
+.botao-adicionar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 206px;
+    height: 31px;
+    padding: 0 12px;
+    border-radius: 10px;
+    background: rgba(87, 108, 109, 1);
+    color: var(--sobre-acento);
+    font-size: 0.77rem;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: filter 0.15s;
+}
+
+
+.botao-adicionar:hover {
+    filter: brightness(1.12);
+}
+
+.calendario-caixa {
+    padding: 0 24px 28px;
+    border-radius: 32px;
+    background: var(--cartao);
+    box-shadow: var(--sombra-cartao);
+}
+
+.calendario-mes {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 72px;
+    margin: 0 -24px;
+}
+
+.calendario-mes h3 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.seta {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    padding: 6px;
+    border: 0;
+    background: none;
+    color: var(--seta);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: color 0.15s;
+}
+
+#mes-seguinte {
+    left: auto;
+    right: 12px;
+}
+
+.seta:hover {
+    color: var(--texto);
+}
+
+.calendario-grade {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.calendario-grade th {
+    height: 72px;
+    padding: 0 0 18px;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.calendario-grade td {
+    height: 64.5px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dia {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.dia:hover {
+    background: var(--hover-dia);
+}
+
+.dia-hoje,
+.dia-hoje:hover {
+    background: var(--acento);
+    color: var(--sobre-acento);
+}
+
+.dia-hoje:hover {
+    filter: brightness(1.1);
+}
+
+/* ---------- Painel: compromissos de hoje (empilhado por padrao) ---------- */
+#painel-compromissos-hoje {
+    width: 100%;
+    max-width: 420px;
+    margin: 40px auto 0;
+}
+
+#painel-compromissos-hoje h2 {
+    margin-bottom: 4px;
+    font-size: 1.28rem;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.appointments-list {
+    padding: 14px 22px 0;
+    border-radius: 30px 30px 0 0;
+    background: var(--cartao);
+}
+
+.appointment-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 15px 0 17px;
+    text-align: center;
+}
+
+.checkbox-concluir {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.appointment-text {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+.btn-concluir {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    line-height: 1.2;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s;
+}
+
+.btn-concluir:hover {
+    background: var(--hover-dia);
+}
+
+.checkbox-concluir:checked ~ .appointment-text {
+    text-decoration: line-through;
+    opacity: 0.55;
+}
+
+.checkbox-concluir:checked ~ .btn-concluir {
+    font-weight: 600;
+}
+
+.checkbox-concluir:focus-visible ~ .btn-concluir {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+}
+
+.progress-tracker {
+    padding: 14px 22px 26px;
+    border-radius: 0 0 30px 30px;
+    background: var(--cartao);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ---------- Dropdowns: menu, notificacoes, perfil ---------- */
+.overlay {
+    display: none;
+}
+
+#overlay-menu,
+#overlay-notificacoes,
+#overlay-perfil {
+    position: absolute;
+    z-index: 60;
+    box-shadow: var(--sombra);
+    animation: descer 0.16s ease-out;
+}
+
+#toggle-menu:checked ~ #overlay-menu,
+#toggle-notificacoes:checked ~ #overlay-notificacoes,
+#toggle-perfil:checked ~ #overlay-perfil {
+    display: block;
+}
+
+/* Menu */
+#overlay-menu {
+    top: 55px;
+    left: 0;
+    width: 174px;
+    background: var(--item);
+}
+
+.overlay-nav li > a,
+.overlay-nav li > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 55px;
+    padding: 6px 8px;
+    background: var(--item);
+    color: var(--texto);
+    font-size: var(--fs);
+    line-height: 1.35;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: backgrou#toggle-assistentend-color 0.15s, color 0.15s;
+}
+
+.overlay-nav li > a:hover,
+.overlay-nav li > label:hover,
+.overlay-nav li > a:focus-visible {
+    background: var(--acento);
+    color: var(--sobre-acento);
+}
+
+/* Notificacoes */
+#overlay-notificacoes {
+    top: 65px;
+    right: 149px;
+    width: 296px;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+}
+
+.marcar-lidas {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    background: var(--acento);
+    color: var(--sobre-acento);
+    font-size: 0.65rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s;
+}
+
+.marcar-lidas:hover {
+    filter: brightness(1.12);
+}
+
+.notifications-list {
+    padding: 8px 10px 26px;
+    background: var(--item);
+    text-align: center;
+}
+
+.notifications-list li + li {
+    margin-top: 22px;
+}
+
+html:has(#toggle-tema:checked) .notifications-list {
+    background: var(--cartao);
+}
+
+/* Perfil */
+#overlay-perfil {
+    top: 65px;
+    right: 17px;
+    width: 218px;
+}
+
+.perfil-caixa {
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Saudação do menu de perfil */
+.perfil-saudacao {
+    width: 218px !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 26px !important;
+    padding: 4px 0 2px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: rgba(243, 255, 253, 1) !important;
+    color: rgba(78, 85, 84, 1) !important;
+
+    font-family: "Intel One Mono", monospace !important;
+    font-size: 10px !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0 !important;
+    font-variant-ligatures: none !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+/* Destaque do nome do perfil */
+.perfil-saudacao strong,
+.perfil-saudacao b {
+    font-weight: 700 !important;
+}
+
+
+.perfil-opcao {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    font-size: var(--fs);
+    text-decoration: none;
+    transition: filter 0.15s;
+}
+
+
+.perfil-editar,
+.perfil-sair {
+    background: var(--item);
+    color: var(--texto);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.perfil-editar:hover,
+.perfil-sair:hover {
+    background: rgba(87, 108, 109, 1);
+    color: #ffffff;
+}
+
+
+/* ---------- Modais: adicionar compromisso e assistente ---------- */
+#overlay-adicionar-compromisso,
+#overlay-assistente {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    place-items: center;
+    padding: 12px;
+    animation: aparecer 0.18s ease-out;
+}
+
+#toggle-adicionar:checked ~ #overlay-adicionar-compromisso,
+#toggle-assistente:checked ~ #overlay-assistente {
+    display: grid;
+}
+
+.overlay-fundo {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+}
+
+.overlay-caixa {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(637px, 100%);
+    height: 524px;
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+    border-radius: 36px;
+
+    border-bottom: 1px solid rgba(78, 85, 84, 1);
+
+    background: linear-gradient(
+        180deg,
+        var(--modal-topo),
+        var(--modal-base)
+    );
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+   font-family: var(--mono);
+font-weight: 400;
+font-style: normal;
+line-height: 1.4;
+letter-spacing: 0;
+color: var(--texto);    
+}
+
+
+.overlay-topo {
+    position: relative;
+    flex: none;
+    padding: 56px 20px 0;
+    text-align: center;
+}
+
+.overlay-topo h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+#overlay-adicionar-compromisso .overlay-topo h2 {
+    font-family: "Intel One Mono", monospace;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+    color: rgba(78, 85, 84, 1);
+}
+.icone-editar {
+    position: absolute;
+    top: 20px;
+    left: 23px;
+    color: var(--acento);
+    font-size: 1.7rem;
+    line-height: 1;
+    
+}
+
+.botao-fechar {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--acento);
+    border-radius: 50%;
+    color: var(--acento);
+    font-size: 0.62rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.botao-fechar:hover {
+    background: var(--acento);
+    color: var(--sobre-acento);
+}
+
+/* Formulario de compromisso */
+#form-adicionar-compromisso {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(140px, 166px) minmax(0, 1fr);
+    column-gap: 73px;
+    align-content: start;
+    padding: 71px 55px 41px 20px;
+}
+
+#form-adicionar-compromisso .campo {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    height: 64px;
+}
+
+#form-adicionar-compromisso .campo label {
+    font-size: 1.25rem;
+    line-height: 24px;
+}
+
+#form-adicionar-compromisso .campo input,
+#form-adicionar-compromisso .campo select {
+    width: 100%;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px dashed rgba(78, 85, 84, 1);
+    border-radius: 0;
+    background: transparent;
+    font-size: 1rem;
+}
+
+#form-adicionar-compromisso .campo select {
+    cursor: pointer;
+}
+
+#form-adicionar-compromisso .campo-descricao {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    height: auto;
+    margin-top: -27px;
+}
+
+
+
+#form-adicionar-compromisso .campo-descricao label {
+    width: 166px;
+    height: 36px;
+    margin-left: 10px;
+    margin-bottom: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Intel One Mono", monospace;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0;
+    color: rgba(78, 85, 84, 1);
+}
+
+
+
+#form-adicionar-compromisso textarea {
+    flex: none;
+    width: 100%;
+    height: 259px;
+    padding: 12px;
+    border: 0;
+    border-radius: 22px;
+    background: var(--acento);
+    color: #fff;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    resize: none;
+}
+
+.botao-salvar {
+    grid-column: 1 / -1;
+    justify-self: end;
+    height: 29px;
+    margin-top: 23px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--acento);
+    color: var(--sobre-acento);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s;
+}
+
+.botao-salvar:hover {
+    filter: brightness(1.12);
+}
+
+/
+/* Área de conversa do Assistente */
+#overlay-assistente #chat-assistente {
+    width: 601px;
+    max-width: 100%;
+    height: 366px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(87, 108, 109, 0.55);
+}
+
+
+.mensagem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 100%;
+}
+
+.mensagem-usuario {
+    align-items: flex-end;
+}
+
+.mensagem-assistente {
+    align-items: flex-start;
+}
+
+.remetente {
+    position: relative;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.mensagem-usuario .remetente {
+    margin-right: 40px;
+    background: var(--acento);
+    color: var(--sobre-acento);
+}
+
+.mensagem-assistente .remetente {
+    margin-left: 40px;
+    background: var(--tag-ia);
+    color: #fff;
+}
+
+/* Rotulo "Assistente" gerado por CSS (o HTML so traz o icone) */
+.mensagem-assistente .remetente::before {
+    content: none;
+}
+
+
+.icone-usuario,
+.icone-robo {
+    position: absolute;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    transform: translateY(-50%);
+
+    filter: brightness(0) saturate(100%)
+            invert(40%) sepia(10%)
+            saturate(700%) hue-rotate(133deg)
+            brightness(93%) contrast(89%);
+}
+
+
+.icone-usuario {
+    left: 100%;
+    margin-left: 6px;
+}
+
+.icone-robo {
+    right: 100%;
+    margin-right: 6px;
+}
+
+.mensagem p {
+    width: fit-content;
+    max-width: 70%;
+    padding: 6px 9px;
+    border-radius: 8px;
+    font-size: 0.77rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.mensagem-usuario p {
+    background: var(--bolha-user);
+    color: var(--texto-user);
+}
+
+   
+.mensagem-assistente p {
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    min-height: 0;
+
+    padding: 8px 10px;
+    border-radius: 10px;
+    box-sizing: border-box;
+
+    background: rgba(145, 163, 164, 1);
+    color: rgba(243, 255, 253, 1);
+
+    
+font-family: "Courier New", monospace;
+font-size: 12px;
+font-weight: 500;
+line-height: 1.6;
+letter-spacing: 0;
+
+
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+
+.barra-pergunta {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    width: min(496px, calc(100% - 100px));
+    height: 30px;
+    margin: 6px auto 17px;
+    border: 1px solid var(--acento);
+    border-radius: 15px;
+}
+
+.barra-pergunta input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 36px;
+    border: 0;
+    background: transparent;
+    font-size: 0.68rem;
+    text-align: center;
+}
+
+.barra-pergunta input:focus-visible {
+    outline: none;
+}
+
+.barra-pergunta:focus-within {
+    outline: none;
+    box-shadow: none;
+}
+
+
+.barra-pergunta button {
+    position: absolute;
+    right: 12px;
+    padding: 4px;
+    border: 0;
+    background: none;
+    color: var(--acento);
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* ---------- Login ---------- */
+.pagina-editar-perfil {
+    --fundo-topo: #aeb0af;
+    --fundo-base: #7f9a9b;
+}
+
+#conteudo-login,
+#conteudo-editar-perfil {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    padding: 70px 11px;
+    overflow: auto;
+}
+
+.caixa-login,
+.caixa-editar-perfil {
+    position: relative;
+    width: min(637px, 100%);
+    margin: auto;
+    border-radius: 36px;
+    background: linear-gradient(180deg, var(--modal-topo), var(--modal-base));
+    box-shadow: -3px 6px 12px rgba(0, 0, 0, 0.28);
+}
+
+.caixa-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 524px;
+    padding: 41px 40px 40px;
+}
+
+/* No HTML o h1 tem .sr-only; no design ele e visivel */
+.caixa-login .sr-only {
+    position: static;
+    order: -1;
+    width: auto;
+    height: auto;
+    margin: 0 0 35px;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.icone-login {
+    width: 130px;
+    height: 130px;
+}
+
+#form-login {
+    width: 100%;
+    max-width: 454px;
+    margin-top: 42px;
+}
+
+#form-login .campo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 22px;
+}
+
+#form-login .campo label {
+    color: var(--suave);
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+#form-login .campo input {
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid var(--suave);
+    border-radius: 0;
+    background: transparent;
+    font-size: 1.1rem;
+}
+
+#form-login .campo input:focus-visible {
+    outline: none;
+    border-bottom-color: var(--acento);
+    box-shadow: 0 1px 0 var(--acento);
+}
+
+.botao-entrar {
+    display: block;
+    width: 184px;
+    height: 46px;
+    margin: 10px auto 0;
+    border: 0;
+    border-radius: 10px;
+    background: var(--acento);
+    color: var(--sobre-acento);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.15s;
+}
+
+.botao-entrar:hover {
+    filter: brightness(1.12);
+}
+
+/* ---------- Editar perfil (pagina propria, desenhada como sobreposicao) ---------- */
+.caixa-editar-perfil {
+    display: flex;
+    flex-direction: column;
+    min-height: 372px;
+    padding: 17px 0 18px;
+}
+
+#form-editar-perfil {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 25px;
+   padding: 0 25px 12px 40px;
+    min-height: 0;
+}
+
+
+#form-editar-perfil {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 37px;
+    padding: 36px 68px 18px 29px;
+}
+
+#form-editar-perfil .campo-foto {
+    grid-row: 1 / 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+
+.icone-foto {  
+    width: 150px;
+    height: 150px;
+    flex: none;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%)
+            invert(40%) sepia(10%)
+            saturate(700%) hue-rotate(133deg)
+            brightness(93%) contrast(89%);
+}
+
+
+.campo-foto label {
+    margin-top: 38px;
+    color: var(--acento);
+    font-size: var(--fs);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.campo-foto input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.campo-foto:focus-within label {
+    outline: 2px solid var(--foco);
+    outline-offset: 3px;
+}
+
+#form-editar-perfil .campo:not(.campo-foto) {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 28px;
+    margin-bottom: 8px;
+    transform: translateY(-12px);
+}
+
+#form-editar-perfil .campo:not(.campo-foto) label {
+    font-size: var(--fs);
+    line-height: 1.2;
+}
+
+#form-editar-perfil .campo:not(.campo-foto) label::after {
+    content: none;
+}
+
+
+
+#form-editar-perfil .campo:not(.campo-foto) input {
+    flex: 0 0 195px;
+    width: 195px;
+    min-width: 0;
+    height: 30px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 8px;
+    background: var(--campo);
+    color: var(--texto);
+    font-size: 11px;
+    box-sizing: border-box;
+}
+
+
+
+.acoes-formulario {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: end;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-right: -44px;
+    padding-top: 0;
+}
+
+.acoes-formulario .botao-salvar {
+    margin-top: 0;
+}
+
+.botao-cancelar {
+    cursor: pointer;
+    color: var(--texto);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.botao-cancelar:hover {
+    text-decoration: underline;
+}
+
+/* Botao X: pseudo-elemento do link "Cancelar" (clicavel, volta ao index) */
+.caixa-editar-perfil .botao-cancelar::after {
+    content: "\2716";
+    content: "\2716" / "";
+    position: absolute;
+    top: 17px;
+    right: 21px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--acento);
+    border-radius: 50%;
+    color: var(--acento);
+    font-size: 0.62rem;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.caixa-editar-perfil .botao-cancelar:hover::after {
+    background: var(--acento);
+    color: var(--sobre-acento);
+}
+
+/* ---------- Editar perfil como modal (exige o bloco #overlay-editar-perfil no index.html) ---------- */
+#overlay-editar-perfil {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    place-items: center;
+    padding: 12px;
+    animation: aparecer 0.18s ease-out;
+}
+
+#toggle-editar-perfil:checked ~ #overlay-editar-perfil {
+    display: grid;
+}
+
+
+
+#overlay-editar-perfil .overlay-caixa {
+    width: min(700px, calc(100vw - 24px));
+    height: 372px;
+    max-height: calc(100dvh - 24px);
+    border-radius: 36px;
+}
+
+}
+
+
+#overlay-editar-perfil .overlay-topo {
+    padding-top: 17px;
+}
+
+#overlay-editar-perfil .overlay-topo h2 {
+    text-transform: capitalize;
+}
+
+#overlay-editar-perfil .botao-fechar {
+    top: 17px;
+    right: 21px;
+}
+
+/* Ao abrir o modal, o dropdown do perfil some e o botao Perfil volta ao normal */
+#toggle-editar-perfil:checked ~ #overlay-perfil {
+    display: none;
+}
+
+#toggle-editar-perfil:checked ~ #cabecalho label[for="toggle-perfil"] {
+    height: 50px;
+    border-radius: 25px;
+    background: var(--pilula);
+    color: var(--texto);
+    box-shadow: var(--sombra);
+}
+
+/* ---------- Animacoes ---------- */
+@keyframes aparecer {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes descer {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================================================
+   Desktop >= 1280px: calendario centralizado + painel ao lado
+   ========================================================================== */
+@media (min-width: 1280px) {
+    #conteudo-principal {
+        width: auto;
+        grid-template-columns: minmax(0, 1fr) 696px minmax(0, 1fr);
+        padding-bottom: 80px;
+    }
+
+    #secao-principal,
+    #calendario {
+        grid-column: 2;
+    }
+
+    #painel-compromissos-hoje {
+        grid-column: 3;
+        grid-row: 2;
+        align-self: start;
+        width: 246px;
+        margin: 78px 0 0 29px;
+    }
+}
+
+/* ==========================================================================
+   Celular <= 700px
+   ========================================================================== */
+@media (max-width: 700px) {
+    #cabecalho,
+    #cabecalho-login,
+    #cabecalho-editar-perfil {
+        height: 85px;
+    }
+
+    .logo {
+        height: 85px;
+    }
+
+    .cabecalho-acoes {
+        gap: 10px;
+        margin: 26px 29px 0 0;
+    }
+
+    .botao-cabecalho {
+        width: 74px;
+        height: 42px;
+        border-radius: 21px;
+    }
+
+    .botao-cabecalho .icone {
+        display: block;
+    }
+
+    .botao-cabecalho .rotulo {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    #toggle-notificacoes:checked ~ #cabecalho label[for="toggle-notificacoes"],
+    #toggle-perfil:checked ~ #cabecalho label[for="toggle-perfil"] {
+        height: 54px;
+        border-radius: 37px 37px 0 0;
+    }
+
+    /* Dropdowns ocupam a largura toda */
+    #overlay-menu {
+        top: 85px;
+        right: 0;
+        width: auto;
+    }
+
+    .overlay-nav li > a,
+    .overlay-nav li > label {
+        font-size: 1.19rem;
+    }
+
+    #overlay-notificacoes,
+    #overlay-perfil {
+        top: 80px;
+        right: 0;
+        left: 0;
+        width: auto;
+    }
+
+    .marcar-lidas {
+        height: 42px;
+        font-size: 0.7rem;
+    }
+
+    .notifications-list {
+        padding: 10px 10px 26px;
+    }
+
+    .perfil-saudacao {
+        height: 21px;
+        font-size: 0.95rem;
+        line-height: 21px;
+    }
+
+    .perfil-opcao {
+        height: 54px;
+        font-size: 1.19rem;
+    }
+
+    /* Pagina inicial */
+    #conteudo-principal {
+        width: min(296px, calc(100% - 32px));
+        padding-bottom: 48px;
+    }
+
+    #secao-principal {
+        padding-top: 91px;
+    }
+
+    #secao-principal h1 {
+        margin-bottom: 12px;
+        line-height: 1.375;
+    }
+
+    .welcome-text {
+        font-size: 0.77rem;
+        line-height: 1.4;
+    }
+
+    .assistant-wrapper {
+        margin-top: 30px;
+    }
+
+    .assistant-wrapper > span,
+    .assistant-wrapper > p {
+        font-size: 0.77rem;
+    }
+
+    .assistant-wrapper > span {
+        line-height: 18px;
+    }
+
+    .assistant-wrapper input {
+        height: 35px;
+        margin-top: 12px;
+        padding: 0 34px 0 14px;
+        border-radius: 18px;
+        font-size: 0.6rem;
+    }
+
+    .btn-assistant-send {
+        bottom: 10px;
+        left: auto;
+        right: 14px;
+        font-size: 0.7rem;
+    }
+
+    .assistant-wrapper input:not(:placeholder-shown) ~ .btn-assistant-send {
+        right: 14px;
+    }
+
+    #calendario {
+        width: 90%;
+        margin: 110px auto 0;
+    }
+
+    .calendario-topo {
+        height: 30px;
+        margin-bottom: 4px;
+        padding-left: 4px;
+    }
+
+    .calendario-topo h2 {
+        margin-top: 0;
+        font-size: 1.15rem;
+    }
+
+    .botao-adicionar {
+        height: auto;
+        min-height: 28px;
+        max-width: 96px;
+        padding: 4px 8px;
+        font-size: 0.6rem;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    .calendario-caixa {
+        padding: 0 16px 20px;
+        border-radius: 30px;
+    }
+
+    .calendario-mes {
+        height: 52px;
+        margin: 0 -16px;
+    }
+
+    .calendario-mes h3 {
+        font-size: 1.4rem;
+    }
+
+    .seta {
+        left: 4px;
+        font-size: 1rem;
+    }
+
+    #mes-seguinte {
+        left: auto;
+        right: 4px;
+    }
+
+    .calendario-grade th {
+        height: 32px;
+        padding: 0;
+        font-size: 0.66rem;
+    }
+
+    .calendario-grade td {
+        height: 39.5px;
+    }
+
+    .dia {
+        width: 30px;
+        height: 30px;
+        font-size: 0.83rem;
+    }
+
+    #painel-compromissos-hoje {
+        width: 90%;
+        max-width: none;
+        margin: 41px auto 0;
+    }
+
+    #painel-compromissos-hoje h2 {
+        margin-bottom: 11px;
+        font-size: 1.14rem;
+    }
+
+    .appointments-list {
+        padding: 12px 16px 0;
+    }
+
+    .appointment-text,
+    .progress-tracker {
+        font-size: 0.78rem;
+    }
+
+    /* Modais */
+    .overlay-caixa {
+        width: min(100%, 420px);
+        height: min(629px, calc(100dvh - 24px));
+        border-radius: 32px;
+    }
+
+    .overlay-topo {
+        padding: 36px 16px 0;
+    }
+
+    .overlay-topo h2 {
+        font-size: 1.6rem;
+        line-height: 1.4;
+    }
+
+    #overlay-assistente .overlay-topo h2 {
+        text-align: left;
+    }
+
+    .icone-editar {
+        top: 20px;
+        left: 20px;
+    }
+
+    .botao-fechar {
+        top: 21px;
+        right: 17px;
+    }
+
+    #form-adicionar-compromisso {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 19px;
+        padding: 33px 13px 20px;
+    }
+
+    #form-adicionar-compromisso .campo {
+        height: 53px;
+    }
+
+    #form-adicionar-compromisso .campo:nth-child(3),
+    #form-adicionar-compromisso .campo:nth-child(4) {
+        grid-column: 1 / -1;
+    }
+
+    
+
+#form-adicionar-compromisso .campo label {
+    width: 166px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+
+    font-family: "Intel One Mono", monospace;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0;
+    color: rgba(78, 85, 84, 1);
+}
+
+
+
+    #form-adicionar-compromisso .campo input,
+    #form-adicionar-compromisso .campo select {
+        height: 28px;
+    }
+
+    #form-adicionar-compromisso .campo-descricao {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        margin-top: 12px;
+    }
+
+    #form-adicionar-compromisso .campo-descricao label {
+        margin-left: 2px;
+    }
+
+    #form-adicionar-compromisso textarea {
+        font-size: var(--fs);
+    }
+
+    .botao-salvar {
+        margin-top: 17px;
+    }
+
+    .chat {
+        padding: 34px 19px 10px;
+    }
+
+    .mensagem p {
+        max-width: 82%;
+    }
+
+    .barra-pergunta {
+        width: calc(100% - 26px);
+        margin-bottom: 20px;
+    }
+
+    /* Login e editar perfil */
+    .caixa-login,
+    .caixa-editar-perfil {
+        width: min(100%, 420px);
+        border-radius: 32px;
+    }
+
+    .caixa-login {
+        min-height: 629px;
+        padding: 24px 33px 40px;
+    }
+
+    .caixa-login .sr-only {
+        margin-bottom: 50px;
+        font-size: 1.6rem;
+        line-height: 1.55;
+    }
+
+    #form-login {
+        margin-top: 40px;
+    }
+
+    .caixa-editar-perfil {
+        min-height: 486px;
+        padding-top: 22px;
+    }
+
+    .caixa-editar-perfil h1 {
+        font-size: 1.6rem;
+    }
+
+    #form-editar-perfil {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: none;
+        padding: 28px 30px 0 40px;
+    }
+
+    #form-editar-perfil .campo-foto {
+        grid-row: auto;
+        grid-column: 1;
+        margin-top: 10px;
+    }
+
+    #form-editar-perfil .campo:not(.campo-foto) {
+        grid-column: 1;
+    }
+
+    .acoes-formulario {
+        grid-column: 1;
+        grid-row: auto;
+        margin-right: -12px;
+        padding-top: 14px;
+    }
+
+    .caixa-editar-perfil .botao-cancelar::after {
+        top: 24px;
+        right: 18px;
+    }
+}
+
+/* ==========================================================================
+   Celular pequeno <= 400px
+   ========================================================================== */
+@media (max-width: 400px) {
+    .logo {
+        padding: 0 14px;
+        font-size: 1.25rem;
+    }
+
+    .cabecalho-acoes {
+        gap: 8px;
+        margin-right: 14px;
+    }
+
+    .botao-cabecalho {
+        width: 58px;
+    }
+
+    #toggle-notificacoes:checked ~ #cabecalho label[for="toggle-notificacoes"],
+    #toggle-perfil:checked ~ #cabecalho label[for="toggle-perfil"] {
+        border-radius: 29px 29px 0 0;
+    }
+
+    .caixa-login {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+/* Editar perfil (modal) - ajustes de celular */
+@media (max-width: 700px) {
+    #overlay-editar-perfil .overlay-caixa {
+        height: min(486px, calc(100dvh - 24px));
+    }
+
+    #overlay-editar-perfil .overlay-topo {
+        padding-top: 22px;
+    }
+
+    #overlay-editar-perfil .botao-fechar {
+        top: 24px;
+        right: 18px;
+    }
+
+    #toggle-editar-perfil:checked ~ #cabecalho label[for="toggle-perfil"] {
+        height: 42px;
+        border-radius: 21px;
+    }
+}
+
+
+/* Efeito hover nas notificações */
+.notifications-list li {
+    padding: 8px 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.notifications-list li:hover {
+    background: rgba(87, 108, 109, 1);
+    color: #ffffff;
+    cursor: pointer;
+}
+
+
+/* Efeito hover nas opções do perfil */
+.perfil-opcao {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.perfil-opcao:hover {
+    background: rgba(87, 108, 109, 1);
+    color: #ffffff;
+}
+
+/* Janela de adicionar compromisso */
+#overlay-adicionar-compromisso {
+    position: fixed;
+    inset: 0;
+    padding: 20px;
+    place-items: center;
+}
+
+#overlay-adicionar-compromisso .overlay-caixa {
+    width: min(637px, 100%);
+    height: auto;
+    min-height: 524px;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    border-radius: 36px;
+    background: var(--modal-base);
+}
+
+/* Cabeçalho */
+#overlay-adicionar-compromisso .overlay-topo {
+    padding: 50px 20px 0;
+}
+
+#overlay-adicionar-compromisso .overlay-topo h2 {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    line-height: 1.2;
+    text-align: center;
+}
+
+/* Formulário */
+#form-adicionar-compromisso {
+    flex: none;
+    display: grid;
+    grid-template-columns: 166px minmax(0, 1fr);
+    column-gap: 73px;
+    padding: 55px 55px 35px 20px;
+    align-content: start;
+}
+
+/* Campos da esquerda */
+#form-adicionar-compromisso .campo {
+    grid-column: 1;
+    height: 64px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Descrição à direita */
+#form-adicionar-compromisso .campo-descricao {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    height: auto;
+    margin-top: -25px;
+}
+
+#form-adicionar-compromisso textarea {
+    width: 100%;
+    height: 259px;
+    border-radius: 22px;
+}
+
+/* Botão salvar */
+#form-adicionar-compromisso .botao-salvar {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin-top: 20px;
+}
+
+/* Responsividade */
+@media (max-width: 700px) {
+    #overlay-adicionar-compromisso .overlay-caixa {
+        width: min(420px, 100%);
+        min-height: 0;
+        max-height: calc(100dvh - 24px);
+        border-radius: 30px;
+    }
+
+    #overlay-adicionar-compromisso .overlay-topo {
+        padding: 45px 16px 0;
+    }
+
+    #form-adicionar-compromisso {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 30px 20px;
+    }
+
+    #form-adicionar-compromisso .campo {
+        grid-column: 1;
+        height: auto;
+        min-height: 55px;
+    }
+
+    #form-adicionar-compromisso .campo-descricao {
+        grid-column: 1;
+        grid-row: auto;
+        margin-top: 0;
+    }
+
+    #form-adicionar-compromisso textarea {
+        height: 180px;
+    }
+}
+
+/* Ajuste da janela de compromisso */
+#overlay-adicionar-compromisso .overlay-caixa {
+    width: min(637px, calc(100% - 20px));
+    height: auto;
+    min-height: 524px;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 36px;
+}
+
+/* Título */
+#overlay-adicionar-compromisso .overlay-topo {
+    padding: 50px 20px 0;
+}
+
+#overlay-adicionar-compromisso .overlay-topo h2 {
+    font-size: 2.2rem;
+    text-align: center;
+}
+
+/* Organização do formulário */
+#form-adicionar-compromisso {
+    flex: none;
+    display: grid;
+    grid-template-columns: 166px minmax(0, 1fr);
+    column-gap: 73px;
+    padding: 55px 55px 35px 20px;
+    align-content: start;
+}
+
+/* Campos da esquerda */
+#form-adicionar-compromisso .campo {
+    grid-column: 1;
+    height: 64px;
+}
+
+/* Descrição */
+#form-adicionar-compromisso .campo-descricao {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    height: auto;
+    margin-top: -25px;
+}
+
+#form-adicionar-compromisso textarea {
+    width: 100%;
+    height: 259px;
+}
+
+/* Botão salvar */
+#form-adicionar-compromisso .botao-salvar {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin-top: 20px;
+}
+
+/* Tamanho do ícone de edição */
+#overlay-adicionar-compromisso .icone-editar {
+    position: absolute;
+    top: 20px;
+    left: 23px;
+    width: 26px;
+    height: 26px;
+    max-width: 26px;
+    max-height: 26px;
+    object-fit: contain;
+}
+
+/* Tamanho do ícone de fechar */
+#overlay-adicionar-compromisso .botao-fechar img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* Ajuste da janela */
+#overlay-adicionar-compromisso .overlay-caixa {
+    box-sizing: border-box;
+    width: min(637px, 95vw);
+    height: auto;
+    min-height: 524px;
+    max-height: calc(100dvh - 40px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Organização do conteúdo */
+#overlay-adicionar-compromisso .overlay-topo {
+    position: relative;
+}
+
+#form-adicionar-compromisso {
+    box-sizing: border-box;
+    min-height: 0;
+}
+
+/* Evita que os campos ultrapassem as colunas */
+#form-adicionar-compromisso .campo,
+#form-adicionar-compromisso textarea {
+    min-width: 0;
+}
+
+/* Botão X para fechar a janela */
+#overlay-adicionar-compromisso .botao-fechar {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 26px;
+    height: 26px;
+    padding: 0;
+
+    border: 2px solid #576C6D;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Esconde o ícone antigo */
+#overlay-adicionar-compromisso .botao-fechar img {
+    display: none;
+}
+
+/* Desenha o X dentro do círculo */
+#overlay-adicionar-compromisso .botao-fechar::after {
+    content: "×";
+    display: block;
+
+    color: #576C6D;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+/* Efeito ao passar o mouse */
+#overlay-adicionar-compromisso .botao-fechar:hover {
+    background: #576C6D;
+}
+
+#overlay-adicionar-compromisso .botao-fechar:hover::after {
+    color: #FFFFFF;
+}
+
+/* Remove o campo Repetir */
+#form-adicionar-compromisso .campo:has(#input-repetir) {
+    display: none !important;
+}
+
+/* X para fechar o assistente */
+#overlay-assistente .botao-fechar {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 26px;
+    height: 26px;
+    padding: 0;
+
+    border: 2px solid #576C6D;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Esconde o ícone antigo */
+#overlay-assistente .botao-fechar img {
+    display: none;
+}
+
+/* Adiciona o X */
+#overlay-assistente .botao-fechar::after {
+    content: "×";
+    color: #576C6D;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+/* Efeito ao passar o mouse */
+#overlay-assistente .botao-fechar:hover {
+    background: #576C6D;
+}
+
+#overlay-assistente .botao-fechar:hover::after {
+    color: #FFFFFF;
+}
+
+/* Barra de pergunta */
+#overlay-assistente .barra-pergunta {
+    position: relative;
+    width: min(496px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Texto da pergunta */
+#overlay-assistente .barra-pergunta input {
+    width: 100%;
+    padding: 0 55px 0 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Seta de envio */
+#overlay-assistente .barra-pergunta button {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+    padding: 0;
+
+    border: none;
+    background: transparent;
+    color: #576C6D;
+    cursor: pointer;
+}
+
+/* Janela editar perfil */
+#overlay-editar-perfil .caixa-editar-perfil {
+    width: min(637px, 95vw);
+    min-height: 372px;
+    height: auto;
+    padding: 20px 24px 18px;
+    border-radius: 38px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Título */
+#overlay-editar-perfil .overlay-topo {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 0 0 35px;
+    padding: 0;
+    border: none;
+}
+
+#overlay-editar-perfil .overlay-topo h2 {
+    font-size: 38px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Botão fechar */
+#overlay-editar-perfil .botao-fechar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    border: 2px solid #576C6D;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#overlay-editar-perfil .botao-fechar img {
+    display: none;
+}
+
+#overlay-editar-perfil .botao-fechar::after {
+    content: "×";
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    color: #576C6D;
+}
+
+/* Estrutura do formulário */
+#form-editar-perfil {
+    display: grid;
+    grid-template-columns: 235px minmax(0, 1fr);
+    column-gap: 30px;
+    align-items: start;
+}
+
+/* Foto do perfil */
+#form-editar-perfil .editar-perfil-foto {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 0 0;
+}
+
+/* Tamanho do ícone */
+#form-editar-perfil .icone-foto {
+    width: 155px;
+    height: 155px;
+    padding: 0;
+    object-fit: contain;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    filter: brightness(0) saturate(100%)
+            invert(36%) sepia(11%)
+            saturate(710%) hue-rotate(136deg);
+}
+
+/* Trocar foto */
+#form-editar-perfil .link-trocar-foto {
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: underline;
+    color: #576C6D;
+    white-space: nowrap;
+}
+
+/* Dados à direita */
+#form-editar-perfil .editar-perfil-dados {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 5px;
+}
+
+/* Nome e email */
+#form-editar-perfil .dado-perfil {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: #4E5554;
+}
+
+/* Campos de edição */
+#form-editar-perfil .campo-linha {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    min-height: 30px;
+}
+
+#form-editar-perfil .campo-linha label {
+    flex: 0 0 110px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#form-editar-perfil .campo-linha input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 30px;
+    min-height: 30px;
+    padding: 0 10px;
+    background: #C9D1CC;
+    border: none;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+/* Botões inferiores */
+
+#form-editar-perfil .acoes-formulario {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 0;
+    margin-right: 0;
+    padding: 0;
+    border: none;
+    align-self: end;
+    transform: translateY(-12px);
+}
+
+
+#form-editar-perfil .botao-cancelar {
+    background: transparent;
+    border: none;
+    min-width: 0;
+    padding: 8px;
+}
+
+#form-editar-perfil .botao-salvar {
+    min-width: 82px;
+    min-height: 30px;
+    padding: 5px 15px;
+    background: #576C6D;
+    border-radius: 10px;
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 600px) {
+    #overlay-editar-perfil .caixa-editar-perfil {
+        padding: 20px;
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+    }
+
+    #overlay-editar-perfil .overlay-topo h2 {
+        font-size: 27px;
+    }
+
+    #form-editar-perfil {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    #form-editar-perfil .editar-perfil-foto,
+    #form-editar-perfil .editar-perfil-dados,
+    #form-editar-perfil .acoes-formulario {
+        grid-column: 1;
+    }
+
+    #form-editar-perfil .icone-foto {
+        width: 110px;
+        height: 110px;
+    }
+
+    #form-editar-perfil .campo-linha label {
+        flex-basis: 100px;
+        white-space: normal;
+    }
+}
+
+/* Ajustar alinhamento dos campos */
+#form-editar-perfil .campo-linha {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Rótulos */
+#form-editar-perfil .campo-linha label {
+    width: auto;
+    min-width: 0;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* Campos de digitação */
+#form-editar-perfil .campo-linha input {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 0 10px;
+    font-size: 11px;
+    box-sizing: border-box;
+}
+
+/* Mais espaço para a coluna dos dados */
+#form-editar-perfil {
+    grid-template-columns: 170px minmax(0, 1fr);
+    column-gap: 15px;
+}
+
+/* Versão celular */
+@media (max-width: 600px) {
+    #form-editar-perfil {
+        grid-template-columns: 1fr;
+    }
+
+    #form-editar-perfil .campo-linha {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/* Remover o X duplicado do Editar Perfil */
+#overlay-editar-perfil .botao-cancelar::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Manter apenas o botão de fechar */
+#overlay-editar-perfil .botao-fechar {
+    position: absolute;
+    top: 17px;
+    right: 21px;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 2px solid var(--acento);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ajustes da tela de login */
+body:has(form input[type="password"]) {
+    min-height: 100vh;
+}
+
+/* Janela de login */
+.login-container {
+    width: min(400px, 90vw);
+    min-height: 330px;
+    padding: 30px 40px;
+    border-radius: 25px;
+}
+
+/* Título */
+.login-container h1,
+.login-container h2 {
+    font-size: 24px;
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+/* Ícone do perfil */
+.login-container .icone-perfil,
+.login-container .login-icone {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 25px;
+}
+
+/* Campos de login */
+.login-container input {
+    width: 100%;
+    height: 36px;
+    padding: 5px 0;
+    font-size: 12px;
+    border: none;
+    border-bottom: 1px solid #C1C9C5;
+    background: transparent;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+/* Espaçamento entre os campos */
+.login-container input + input {
+    margin-top: 12px;
+}
+
+/* Botão entrar */
+.login-container button {
+    display: block;
+    width: 115px;
+    height: 30px;
+    margin: 25px auto 0;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    background: #576C6D;
+    color: #FFFFFF;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Ajuste para celular */
+@media (max-width: 600px) {
+    .login-container {
+        width: 90%;
+        padding: 25px;
+    }
+}
+
+/* Tela de login */
+.pagina-login #conteudo-login {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Caixa central */
+.pagina-login #caixa-login {
+    width: min(403px, 100%);
+    min-height: 330px;
+    height: auto;
+    padding: 30px 40px 35px;
+    box-sizing: border-box;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Título */
+.pagina-login .titulo-login {
+    order: 0;
+    margin: 0 0 18px;
+    font-size: 24px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Ícone */
+.pagina-login .icone-login {
+    order: 1;
+    display: block;
+    width: 85px;
+    height: 85px;
+    margin: 0 auto 20px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%)
+            invert(36%) sepia(11%)
+            saturate(710%) hue-rotate(136deg);
+}
+
+/* Formulário */
+.pagina-login #form-login {
+    order: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Campos */
+.pagina-login #form-login .campo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.pagina-login #form-login .campo label {
+    font-size: 12px;
+}
+
+.pagina-login #form-login .campo input {
+    width: 100%;
+    height: 25px;
+    padding: 0;
+    border: none;
+    border-bottom: 1px solid #C1C9C5;
+    border-radius: 0;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+/* Botão entrar */
+.pagina-login .botao-entrar {
+    align-self: center;
+    width: 115px;
+    height: 30px;
+    margin-top: 12px;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    background: #576C6D;
+    color: #FFFFFF;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Celular */
+@media (max-width: 480px) {
+    .pagina-login #caixa-login {
+        padding: 25px 20px;
+    }
+
+    .pagina-login .titulo-login {
+        font-size: clamp(16px, 5vw, 24px);
+    }
+}
+
+/* Ícone de login mais destacado */
+.pagina-login .icone-login {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin: 0 auto 18px;
+
+    filter: brightness(0) saturate(100%)
+            invert(32%) sepia(12%)
+            saturate(650%) hue-rotate(135deg);
+}
+/* Hover dos botões no modo escuro */
+html:has(#toggle-tema:checked) .botao-entrar:hover,
+html:has(#toggle-tema:checked) .botao-salvar:hover {
+    background: linear-gradient(
+        275.36deg,
+        #40313C 0.22%,
+        #8B6B82 99.78%
+    );
+    color: #FFFFFF;
+    cursor: pointer;
+}
+/* Hover das notificações e perfil no modo escuro */
+html:has(#toggle-tema:checked) .notifications-list li:hover,
+html:has(#toggle-tema:checked) .perfil-opcao:hover {
+    background: linear-gradient(
+        275.36deg,
+        #40313C 0.22%,
+        #8B6B82 99.78%
+    );
+
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+/* Texto e ícones acompanham a cor do hover */
+html:has(#toggle-tema:checked) .notifications-list li:hover *,
+html:has(#toggle-tema:checked) .perfil-opcao:hover * {
+    color: #FFFFFF;
+}
+
+/* Assistente StudyFlow - modo escuro */
+html:has(#toggle-tema:checked) #overlay-assistente .overlay-caixa {
+    width: min(637px, 95vw);
+    height: 524px;
+    max-height: calc(100dvh - 30px);
+    padding: 20px 18px 18px;
+    box-sizing: border-box;
+    border-radius: 38px;
+    overflow: hidden;
+    background: linear-gradient(
+        180deg,
+        #191419 0%,
+        #20171F 100%
+    );
+}
+
+/* Título */
+html:has(#toggle-tema:checked) #overlay-assistente .overlay-topo {
+    padding: 34px 10px 0;
+}
+
+html:has(#toggle-tema:checked) #overlay-assistente .overlay-topo h2 {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #E9DBE8;
+    text-align: center;
+}
+
+/* Botão fechar */
+html:has(#toggle-tema:checked) #overlay-assistente .botao-fechar {
+    top: 20px;
+    right: 22px;
+    border-color: #E9DBE8;
+}
+
+html:has(#toggle-tema:checked) #overlay-assistente .botao-fechar::after {
+    color: #E9DBE8;
+}
+
+/* Área das mensagens */
+html:has(#toggle-tema:checked) #overlay-assistente .chat-mensagens {
+    flex: 1;
+    min-height: 0;
+    padding: 30px 0 10px;
+    overflow-y: auto;
+}
+
+/* Balões das mensagens */
+html:has(#toggle-tema:checked) #overlay-assistente .mensagem {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Ícones de perfil e assistente */
+html:has(#toggle-tema:checked) #overlay-assistente .chat-mensagens img {
+    filter: brightness(0) invert(1);
+}
+
+/* Campo de pergunta */
+html:has(#toggle-tema:checked) #overlay-assistente .barra-pergunta {
+    width: min(496px, 100%);
+    min-height: 30px;
+    margin: auto auto 0;
+    border: 1px solid #755B72;
+    border-radius: 20px;
+}
+
+/* Texto do campo */
+html:has(#toggle-tema:checked) #overlay-assistente .barra-pergunta input {
+    color: #E9DBE8;
+    font-size: 11px;
+}
+
+html:has(#toggle-tema:checked) #overlay-assistente .barra-pergunta input::placeholder {
+    color: #B9A8B6;
+}
+
+/* Seta de envio */
+html:has(#toggle-tema:checked) #overlay-assistente .barra-pergunta button {
+    color: #E9DBE8;
+}
+
+/* Celular */
+@media (max-width: 700px) {
+    html:has(#toggle-tema:checked) #overlay-assistente .overlay-caixa {
+        width: min(420px, 95vw);
+        height: min(524px, 90dvh);
+        padding: 15px;
+    }
+
+    html:has(#toggle-tema:checked) #overlay-assistente .overlay-topo h2 {
+        font-size: 25px;
+    }
+}
+/* Ícones do assistente no modo escuro */
+html:has(#toggle-tema:checked) #overlay-assistente img {
+    filter: brightness(0) saturate(100%)
+            invert(91%) sepia(10%) saturate(250%)
+            hue-rotate(265deg) brightness(102%);
+}
+
+/* Ícones SVG que utilizam currentColor */
+html:has(#toggle-tema:checked) #overlay-assistente svg {
+    color: rgba(233, 219, 232, 1);
+}/* Botão fechar do Assistente - modo escuro */
+html:has(#toggle-tema:checked) #overlay-assistente .botao-fechar {
+    border: 2px solid rgba(116, 97, 118, 0.55);
+    color: rgba(116, 97, 118, 0.55);
+}
+
+/* Cor do X */
+html:has(#toggle-tema:checked) #overlay-assistente .botao-fechar::after {
+    color: rgba(116, 97, 118, 0.55);
+}
+/* EDITAR PERFIL - MODO ESCURO */
+
+/* Fundo da janela */
+html:has(#toggle-tema:checked) #overlay-editar-perfil .caixa-editar-perfil {
+    background: linear-gradient(
+        180deg,
+        #191419 0%,
+        #20171F 100%
+    );
+}
+
+/* Título */
+html:has(#toggle-tema:checked) #overlay-editar-perfil .overlay-topo h2 {
+    color: rgba(233, 219, 232, 1);
+}
+
+/* Ícone de formatura */
+html:has(#toggle-tema:checked) #form-editar-perfil .icone-foto {
+    filter: brightness(0) saturate(100%)
+            invert(91%) sepia(10%)
+            saturate(250%) hue-rotate(265deg)
+            brightness(102%);
+}
+
+/* Nome, email e rótulos */
+html:has(#toggle-tema:checked) #form-editar-perfil .dado-perfil,
+html:has(#toggle-tema:checked) #form-editar-perfil .campo label,
+html:has(#toggle-tema:checked) #form-editar-perfil .campo-linha label {
+    color: rgba(233, 219, 232, 1);
+}
+
+/* Campos de digitação */
+html:has(#toggle-tema:checked) #form-editar-perfil input {
+    background: rgba(116, 97, 118, 0.25);
+    color: rgba(233, 219, 232, 1);
+}
+
+/* Texto dentro dos campos */
+html:has(#toggle-tema:checked) #form-editar-perfil input::placeholder {
+    color: rgba(233, 219, 232, 0.55);
+}
+
+/* Link trocar foto */
+html:has(#toggle-tema:checked) #form-editar-perfil .link-trocar-foto {
+    color: rgba(233, 219, 232, 1);
+}
+
+/* Botão cancelar */
+html:has(#toggle-tema:checked) #form-editar-perfil .botao-cancelar {
+    color: rgba(139, 107, 130, 1);
+}
+
+/* Botão salvar */
+html:has(#toggle-tema:checked) #form-editar-perfil .botao-salvar {
+    background: linear-gradient(
+        275.36deg,
+        #40313C 0.22%,
+        #8B6B82 99.78%
+    );
+    color: rgba(233, 219, 232, 1);
+}
+
+/* Botão fechar */
+html:has(#toggle-tema:checked) #overlay-editar-perfil .botao-fechar {
+    border-color: rgba(233, 219, 232, 1);
+    color: rgba(233, 219, 232, 1);
+}
+
+html:has(#toggle-tema:checked) #overlay-editar-perfil .botao-fechar::after {
+    color: rgba(233, 219, 232, 1);
+}
+/* Botão fechar - Adicionar Compromisso - modo escuro */
+html:has(#toggle-tema:checked)
+#overlay-adicionar-compromisso .botao-fechar {
+    border: 2px solid rgba(233, 219, 232, 1);
+    color: rgba(233, 219, 232, 1);
+}
+
+/* Cor do X */
+html:has(#toggle-tema:checked)
+#overlay-adicionar-compromisso .botao-fechar::after {
+    color: rgba(233, 219, 232, 1);
+}
+/* Layout mobile das janelas */
+@media (max-width: 700px) {
+
+    /* ASSISTENTE STUDYFLOW */
+    #overlay-assistente .overlay-caixa {
+        width: min(360px, calc(100vw - 24px));
+        height: min(570px, calc(100dvh - 32px));
+        max-height: calc(100dvh - 32px);
+        padding: 18px 14px 16px;
+        box-sizing: border-box;
+        border-radius: 34px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #overlay-assistente .overlay-topo {
+        flex: 0 0 auto;
+        padding: 24px 0 0;
+    }
+
+    #overlay-assistente .overlay-topo h2 {
+        font-size: clamp(19px, 5.5vw, 25px);
+        line-height: 1.2;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    #overlay-assistente .botao-fechar {
+        top: 12px !important;
+        right: 13px !important;
+        z-index: 5;
+    }
+
+    #overlay-assistente .chat-mensagens {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 22px 0 12px;
+    }
+
+    #overlay-assistente .barra-pergunta {
+        position: relative;
+        flex: 0 0 auto;
+        width: 100%;
+        margin: 10px 0 0;
+    }
+
+    /* ADICIONAR COMPROMISSO */
+    #overlay-adicionar-compromisso .overlay-caixa {
+        width: min(360px, calc(100vw - 24px));
+        height: min(570px, calc(100dvh - 32px));
+        max-height: calc(100dvh - 32px);
+        padding: 18px 14px 16px;
+        box-sizing: border-box;
+        border-radius: 32px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #overlay-adicionar-compromisso .overlay-topo {
+        padding: 10px 22px 0;
+        margin-bottom: 22px;
+    }
+
+    #overlay-adicionar-compromisso .overlay-topo h2 {
+        font-size: clamp(22px, 6vw, 29px);
+        line-height: 1.1;
+        text-align: center;
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
+    #overlay-adicionar-compromisso .icone-editar {
+        top: 12px;
+        left: 13px;
+        width: 22px;
+        height: 22px;
+    }
+
+    #overlay-adicionar-compromisso .botao-fechar {
+        top: 12px;
+        right: 13px;
+    }
+
+    /* Data e Horário lado a lado */
+    #form-adicionar-compromisso {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 15px;
+        row-gap: 16px;
+        width: 100%;
+        padding: 0;
+        box-sizing: border-box;
+        align-content: start;
+    }
+
+    #form-adicionar-compromisso .campo {
+        grid-column: auto;
+        grid-row: auto;
+        width: 100%;
+        height: auto;
+        min-width: 0;
+        margin: 0;
+    }
+
+    #form-adicionar-compromisso .campo:nth-child(3),
+    #form-adicionar-compromisso .campo:nth-child(4) {
+        grid-column: 1 / -1;
+    }
+
+    #form-adicionar-compromisso .campo input,
+    #form-adicionar-compromisso .campo select {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    /* Descrição grande */
+    #form-adicionar-compromisso .campo-descricao {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        width: 100%;
+        min-width: 0;
+        margin: 20px 0 0;
+    }
+
+    #form-adicionar-compromisso .campo-descricao label {
+        margin: 0 0 6px;
+    }
+
+    #form-adicionar-compromisso textarea {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        height: 245px;
+        padding: 12px;
+        box-sizing: border-box;
+        border-radius: 18px;
+        resize: none;
+        overflow-wrap: break-word;
+    }
+
+    #form-adicionar-compromisso .botao-salvar {
+        grid-column: 1 / -1;
+        justify-self: end;
+        align-self: end;
+        margin-top: 0;
+    }
+
+    /* Manter Repetir oculto */
+    #form-adicionar-compromisso .campo:has(#input-repetir) {
+        display: none !important;
+    }
+}
+
+/* Ícones de Notificações e Perfil - celular */
+@media (max-width: 700px) {
+
+    /* Estado normal: verde */
+    .botao-notificacoes img,
+    .botao-perfil img {
+        filter: brightness(0) saturate(100%)
+                invert(40%) sepia(10%)
+                saturate(680%) hue-rotate(135deg);
+    }
+
+    /* Estado selecionado: branco */
+    .botao-notificacoes:active img,
+    .botao-perfil:active img,
+    body:has(#toggle-notificacoes:checked)
+    .botao-notificacoes img,
+    body:has(#toggle-perfil:checked)
+    .botao-perfil img {
+        filter: brightness(0) invert(1);
+    }
+}
+
+/* Sininho das notificações - celular */
+@media (max-width: 700px) {
+
+    /* Verde no estado normal */
+    .botao-notificacoes img,
+    .botao-notificacoes svg,
+    label[for="toggle-notificacoes"] img,
+    label[for="toggle-notificacoes"] svg {
+        filter: brightness(0) saturate(100%)
+                invert(40%) sepia(10%)
+                saturate(680%) hue-rotate(135deg) !important;
+    }
+
+    /* Branco ao pressionar */
+    .botao-notificacoes:active img,
+    .botao-notificacoes:active svg,
+    label[for="toggle-notificacoes"]:active img,
+    label[for="toggle-notificacoes"]:active svg {
+        filter: brightness(0) invert(1) !important;
+    }
+
+    /* Branco enquanto as notificações estiverem abertas */
+    html:has(#toggle-notificacoes:checked)
+    label[for="toggle-notificacoes"] img,
+    html:has(#toggle-notificacoes:checked)
+    label[for="toggle-notificacoes"] svg {
+        filter: brightness(0) invert(1) !important;
+    }
+}
+
+/* Ícones do cabeçalho - modo escuro */
+@media (max-width: 700px) {
+
+    /* Fundo dos botões */
+    html:has(#toggle-tema:checked) .botao-notificacoes,
+    html:has(#toggle-tema:checked) .botao-perfil,
+    html:has(#toggle-tema:checked) label[for="toggle-notificacoes"],
+    html:has(#toggle-tema:checked) label[for="toggle-perfil"] {
+        background: linear-gradient(
+            180deg,
+            rgba(22, 19, 22, 0.5) 0%,
+            #1D151C 100%
+        );
+    }
+
+    /* Ícones rosa-claro */
+    html:has(#toggle-tema:checked) .botao-notificacoes img,
+    html:has(#toggle-tema:checked) .botao-perfil img,
+    html:has(#toggle-tema:checked) label[for="toggle-notificacoes"] img,
+    html:has(#toggle-tema:checked) label[for="toggle-perfil"] img {
+        filter: brightness(0) saturate(100%)
+                invert(91%) sepia(10%)
+                saturate(250%) hue-rotate(265deg)
+                brightness(102%) !important;
+    }
+
+    /* Fundo ao clicar */
+    html:has(#toggle-tema:checked) .botao-notificacoes:active,
+    html:has(#toggle-tema:checked) .botao-perfil:active,
+    html:has(#toggle-tema:checked) label[for="toggle-notificacoes"]:active,
+    html:has(#toggle-tema:checked) label[for="toggle-perfil"]:active {
+        background: #8B6B82;
+    }
+}
+
+/* Botão fechar do Assistente - modo escuro */
+/* Funciona no celular e no PC */
+
+html:has(#toggle-tema:checked)
+#overlay-assistente .botao-fechar {
+    border: 2px solid rgba(233, 219, 232, 1) !important;
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+html:has(#toggle-tema:checked)
+#overlay-assistente .botao-fechar::after {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Campos do formulário Adicionar compromisso */
+#overlay-adicionar-compromisso .campo input:focus,
+#overlay-adicionar-compromisso .campo input:focus-visible,
+#overlay-adicionar-compromisso .campo select:focus,
+#overlay-adicionar-compromisso .campo select:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px dashed rgba(78, 85, 84, 1);
+}
+
+/* Remove o contorno ao selecionar a descrição */
+#overlay-adicionar-compromisso textarea:focus,
+#overlay-adicionar-compromisso textarea:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Tamanho do campo de descrição */
+#overlay-adicionar-compromisso textarea {
+    width: 303px;
+    height: 234px;
+    max-width: 100%;
+    box-sizing: border-box;
+    resize: none;
+}
+
+/* Ícone do lápis */
+#overlay-adicionar-compromisso .icone-editar {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Botão X */
+#overlay-adicionar-compromisso .botao-fechar {
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+/* Ícone dentro do botão X */
+#overlay-adicionar-compromisso .botao-fechar svg,
+#overlay-adicionar-compromisso .botao-fechar img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Cor do lápis - Adicionar compromisso */
+#overlay-adicionar-compromisso img.icone-editar {
+    filter: brightness(0) saturate(100%)
+            invert(42%) sepia(12%) saturate(460%)
+            hue-rotate(133deg) brightness(92%) contrast(90%) !important;
+}
+
+/* Janela do assistente */
+#overlay-assistente .overlay-caixa {
+    width: min(637px, 100%);
+    height: 524px;
+    max-height: calc(100dvh - 40px);
+    border-radius: 40px;
+    background: rgba(255, 248, 238, 0.95);
+    box-shadow: -6px 4px 9px 3px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Título da janela Assistente StudyFlow */
+#overlay-assistente .overlay-topo h2 {
+    width: 100%;
+    min-height: 73px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Intel One Mono", monospace;
+    font-size: 40px;
+    font-weight: 700;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+
+    color: rgba(78, 85, 84, 1);
+}
+/* Texto PERFIL do Assistente */
+#chat-assistente .mensagem-usuario .remetente {
+    width: 82px;
+    height: 29px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Intel One Mono", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+    color: rgba(243, 255, 253, 1);
+}
+
+/* Chat do Assistente StudyFlow */
+#chat-assistente .mensagem {
+    gap: 6px;
+}
+
+/* Caixas PERFIL e ASSISTENTE */
+#chat-assistente .remetente {
+    width: 83px;
+    height: 29px;
+    box-sizing: border-box;
+    padding: 0;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Intel One Mono", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+}
+
+/* PERFIL */
+#chat-assistente .mensagem-usuario .remetente {
+    background: rgba(87, 108, 109, 1);
+    color: rgba(243, 255, 253, 1);
+    margin-right: 40px;
+}
+
+/* ASSISTENTE */
+#chat-assistente .mensagem-assistente .remetente {
+    background: rgba(145, 163, 164, 1);
+    color: rgba(243, 255, 253, 1);
+    margin-left: 40px;
+}
+
+/* Ícones */
+#chat-assistente .icone-usuario,
+#chat-assistente .icone-robo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* Formatação das mensagens */
+#chat-assistente .mensagem p {
+    box-sizing: border-box;
+    margin: 0;
+    border-radius: 10px;
+    padding: 8px 5px;
+font-family: "Intel One Mono", monospace;
+font-weight: 500;
+font-style: normal;
+font-size: 12px;
+line-height: 1;
+letter-spacing: 0;
+
+}
+
+
+/* Mensagens do usuário */
+#chat-assistente .mensagem-usuario p {
+    width: fit-content;
+    max-width: min(297px, 100%);
+    min-height: 29px;
+    background: rgba(177, 200, 201, 1);
+    color: rgba(78, 85, 84, 1);
+    text-align: right;
+}
+
+/* Respostas do assistente */
+#chat-assistente .mensagem-assistente p {
+    width: fit-content;
+    max-width: min(411px, 100%);
+    min-height: 47px;
+    background: rgba(145, 163, 164, 1);
+    color: rgba(243, 255, 253, 1);
+    text-align: left;
+}
+
+/* Espaçamento entre as mensagens do Assistente */
+#chat-assistente {
+    gap: 35px;
+}
+
+#overlay-assistente #chat-assistente {
+    padding-left: 18px;
+    padding-right: 18px;
+    box-sizing: border-box;
+}
+
+/* Fonte do painel do Assistente */
+#overlay-assistente .overlay-caixa,
+#overlay-assistente .overlay-caixa .mensagem p,
+#overlay-assistente .overlay-caixa .remetente,
+#overlay-assistente .overlay-caixa input {
+    font-family: "Intel One Mono", monospace;
+}
+
+#overlay-editar-perfil .overlay-caixa {
+    width: 637px !important;
+    max-width: calc(100vw - 24px) !important;
+    height: 372px !important;
+    min-height: 0;
+    max-height: calc(100dvh - 24px);
+
+    border-radius: 40px;
+    opacity: 1;
+    overflow-y: hidden;
+}
+
+/* Título de boas-vindas - modo escuro */
+html:has(#toggle-tema:checked) #secao-principal h1 {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Descrição de boas-vindas - modo escuro */
+html:has(#toggle-tema:checked) #secao-principal .welcome-text {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* ===== ASSISTENTE - MODO ESCURO ===== */
+
+/* Área completa do assistente */
+html:has(#toggle-tema:checked) #secao-principal .assistant-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+
+/* Texto superior */
+html:has(#toggle-tema:checked) #secao-principal .assistant-wrapper span {
+    color: rgba(233, 219, 232, 1) !important;
+    text-align: center !important;
+}
+
+/* Descrição do assistente */
+html:has(#toggle-tema:checked) #secao-principal .assistant-wrapper p {
+    color: rgba(233, 219, 232, 1) !important;
+    text-align: center !important;
+}
+
+/* Barra de perguntas */
+html:has(#toggle-tema:checked) #secao-principal .assistant-wrapper input[type="text"] {
+    width: 694px !important;
+    max-width: 100% !important;
+    height: 44px !important;
+
+    margin-top: 14px !important;
+    padding: 0 50px 0 20px !important;
+
+    border: 1px solid rgba(116, 97, 118, 0.55) !important;
+    border-radius: 35px !important;
+
+    background: transparent !important;
+    color: rgba(233, 219, 232, 1) !important;
+
+    box-sizing: border-box !important;
+    text-align: center !important;
+}
+
+/* Texto de exemplo */
+html:has(#toggle-tema:checked) #secao-principal .assistant-wrapper input::placeholder {
+    color: rgba(233, 219, 232, 0.65) !important;
+    opacity: 1 !important;
+}
+
+/* Botão de envio */
+html:has(#toggle-tema:checked) #secao-principal .btn-assistant-send {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Calendário - título no modo escuro */
+html:has(#toggle-tema:checked) #titulo-calendario {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Adicionar compromisso - texto no modo escuro */
+html:has(#toggle-tema:checked) #calendario .botao-adicionar,
+html:has(#toggle-tema:checked) #calendario .btn-adicionar {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Botão Adicionar Compromisso - modo escuro */
+html:has(#toggle-tema:checked) #calendario .botao-adicionar,
+html:has(#toggle-tema:checked) #calendario .btn-adicionar {
+    background: rgba(118, 95, 112, 1) !important;
+}
+
+/* Compromissos de hoje - textos no modo escuro */
+html:has(#toggle-tema:checked) #painel-compromissos-hoje,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje h2,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje .appointment-text,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje .appointment-item,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje .appointment-item *,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje p,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje span,
+html:has(#toggle-tema:checked) #painel-compromissos-hoje label {
+    color: rgba(242, 241, 237, 1) !important;
+}
+
+/* Título Compromissos de hoje - modo escuro */
+html:has(#toggle-tema:checked) #painel-compromissos-hoje h2 {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Compromissos de hoje - modo claro e escuro */
+#painel-compromissos-hoje {
+    transform: translateY(80px) !important;
+}
+
+/* Setas de navegação do calendário */
+#mes-anterior,
+#mes-seguinte {
+    font-family: Arial, sans-serif !important;
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    padding: 6px !important;
+    cursor: pointer !important;
+}
+
+/* Campo de descrição - modo escuro */
+html:has(#toggle-tema:checked) textarea {
+    background: rgba(22, 19, 22, 1) !important;
+}
+
+/* Título do compromisso - modo escuro */
+html:has(#toggle-tema:checked)
+#overlay-adicionar-compromisso .overlay-topo h2 {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Lápis de edição - modo escuro */
+html:has(#toggle-tema:checked)
+#overlay-adicionar-compromisso .icone-editar {
+    filter: brightness(0) saturate(100%) invert(91%)
+            sepia(9%) saturate(405%) hue-rotate(260deg)
+            brightness(101%) contrast(93%) !important;
+}
+
+/* Modal Adicionar Compromisso - modo escuro */
+html:has(#toggle-tema:checked)
+#overlay-adicionar-compromisso .overlay-caixa {
+    width: 637px !important;
+    max-width: calc(100vw - 24px) !important;
+
+    height: 524px !important;
+    max-height: calc(100dvh - 24px) !important;
+
+    border-radius: 40px !important;
+
+    background: linear-gradient(
+        180deg,
+        rgba(22, 19, 22, 0.95) 0%,
+        rgba(29, 21, 28, 0.95) 100%
+    ) !important;
+
+    box-shadow: -7px 5px 8.3px 0px
+        rgba(230, 219, 233, 0.13) !important;
+
+    opacity: 1 !important;
+    box-sizing: border-box !important;
+}
+
+/* Descrição - modo escuro */
+html:has(#toggle-tema:checked)
+#overlay-adicionar-compromisso label {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Assistente StudyFlow - modo escuro */
+html:has(#toggle-tema:checked)
+#overlay-assistente .overlay-caixa {
+    width: 637px !important;
+    max-width: calc(100vw - 24px) !important;
+
+    height: 524px !important;
+    max-height: calc(100dvh - 24px) !important;
+
+    border-radius: 40px !important;
+
+    background: linear-gradient(
+        180deg,
+        rgba(22, 19, 22, 0.95) 0%,
+        rgba(29, 21, 28, 0.95) 100%
+    ) !important;
+
+    box-shadow: -7px 5px 8.3px 0
+        rgba(230, 219, 233, 0.13) !important;
+
+    opacity: 1 !important;
+    box-sizing: border-box !important;
+}
+background: linear-gradient(
+    275.36deg,
+    #40313C 0.22%,
+    #8B6B82 99.78%
+) !important;
+
+/* Assistente StudyFlow - cores do modo escuro */
+
+/* Identificação e mensagens do perfil */
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-usuario .identificacao,
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-usuario p {
+    background: linear-gradient(
+        275.36deg,
+        #40313C 0.22%,
+        #8B6B82 99.78%
+    ) !important;
+}
+
+/* Identificação e mensagens do assistente */
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-assistente .identificacao,
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-assistente p {
+    background: rgba(65, 56, 63, 1) !important;
+}
+
+/* Texto da barra inferior */
+html:has(#toggle-tema:checked)
+#chat-assistente input,
+html:has(#toggle-tema:checked)
+#chat-assistente input::placeholder {
+    color: rgba(233, 219, 232, 0.7) !important;
+    opacity: 1 !important;
+}
+
+/* PERFIL - etiqueta e mensagem */
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-usuario .remetente,
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-usuario p {
+    background: linear-gradient(
+        275.36deg,
+        #40313C 0.22%,
+        #8B6B82 99.78%
+    ) !important;
+}
+
+/* ASSISTENTE - etiqueta e mensagem */
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-assistente .remetente,
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem-assistente p {
+    background: rgba(65, 56, 63, 1) !important;
+}
+
+/* Cor das letras das mensagens */
+html:has(#toggle-tema:checked)
+#chat-assistente .remetente,
+html:has(#toggle-tema:checked)
+#chat-assistente .mensagem p {
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Texto da barra inferior */
+html:has(#toggle-tema:checked)
+#form-pergunta-assistente input,
+html:has(#toggle-tema:checked)
+#form-pergunta-assistente input::placeholder {
+    color: rgba(233, 219, 232, 0.7) !important;
+    opacity: 1 !important;
+}
+
+/* Logo StudyFlow - modo escuro */
+html:has(#toggle-tema:checked) #cabecalho .logo {
+    width: 175px !important;
+    height: 55px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-family: "Intel One Mono", monospace !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+
+    color: rgba(227, 195, 220, 1) !important;
+
+    text-shadow: -7px 5px 8.3px
+        rgba(233, 219, 232, 0.32) !important;
+}
+/* Olá, [Perfil] - modo escuro */
+html:has(#toggle-tema:checked) .perfil-saudacao {
+    background: rgba(118, 95, 112, 1) !important;
+}
+/* Saudação do perfil - modo escuro */
+html:has(#toggle-tema:checked) .perfil-saudacao {
+    width: 218px;
+    min-height: 21px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Intel One Mono", monospace !important;
+    font-size: 10px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+
+    color: rgba(233, 219, 232, 1) !important;
+}
+
+/* Nome do perfil em negrito */
+html:has(#toggle-tema:checked) .perfil-saudacao strong {
+    font-weight: 700 !important;
+}
+
+/* Fundo da saudação - modo claro */
+html:not(:has(#toggle-tema:checked))
+#overlay-perfil .menu-perfil > :first-child {
+    background-color: rgba(87, 108, 109, 1) !important;
+    color: rgba(243, 255, 253, 1) !important;
+}
+
+/* Fundo Olá, [Perfil] - modo claro */
+html:not(:has(#toggle-tema:checked))
+#overlay-perfil .perfil-saudacao {
+    background: rgba(87, 108, 109, 1) !important;
+    color: rgba(243, 255, 253, 1) !important;
+}
+.modal.modal-v2 {
+  position: relative;
+  width: 637px;
+  height: 372px;
+  background: #FFF6EC;
+  color: #4A6264;
+  border-radius: 30px;
+  font-family: "Intel One Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing: border-box;
+}
+
+.modal.modal-v2 h2 {
+  position: absolute;
+  top: 18px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.modal.modal-v2 .fechar {
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 2px solid #4A6264;
+  border-radius: 50%;
+  background: transparent;
+  color: #4A6264;
+  font: 700 13px/1 inherit;
+  cursor: pointer;
+}
+
+.modal.modal-v2 .avatar {
+  position: absolute;
+  left: 55px;
+  top: 92px;
+  width: 116px;
+  height: auto;
+}
+
+.modal.modal-v2 .trocar-foto {
+  position: absolute;
+  left: 36px;
+  top: 236px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4A6264;
+  text-decoration: underline;
+}
+
+.modal.modal-v2 .campos {
+  position: absolute;
+  left: 229px;
+  top: 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.modal.modal-v2 .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal.modal-v2 .atual {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.modal.modal-v2 .campo label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.modal.modal-v2 .campo input {
+  width: 116px;
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 8px;
+  background: #C9D3D2;
+  color: #4A6264;
+  font: 400 9px "Intel One Mono", ui-monospace, monospace;
+}
+
+.modal.modal-v2 .campo input::placeholder {
+  color: rgba(74, 98, 100, .6);
+}
+
+.modal.modal-v2 .acoes {
+  position: absolute;
+  right: 26px;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.modal.modal-v2 .cancelar {
+  border: 0;
+  background: transparent;
+  color: #4A6264;
+  font: 700 10px "Intel One Mono", ui-monospace, monospace;
+  cursor: pointer;
+}
+
+.modal.modal-v2 .salvar {
+  width: 64px;
+  height: 23px;
+  border: 0;
+  border-radius: 999px;
+  background: #566B6C;
+  color: #FFF6EC;
+  font: 700 10px "Intel One Mono", ui-monospace, monospace;
+  cursor: pointer;
+}
+/* Saudação do perfil: acento e espaço (modo claro e escuro) */
+html:root #overlay-perfil nav.perfil-caixa p.perfil-saudacao {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 8px 0 6px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+    white-space: pre-wrap !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+/* Correção do acento e do espaço em "Olá, [Perfil]" (claro e escuro) */
+html:root #overlay-perfil nav.perfil-caixa p.perfil-saudacao {
+    height: auto !important;
+    min-height: 28px !important;
+    padding: 5px 0 3px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    line-height: 1.6 !important;
+    gap: 1ch !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+html {
+    scroll-behavior: auto;
+}
+
+body:has(.overlay:target) {
+    overflow: hidden;
+}
+/* Letras acentuadas usam uma fonte do sistema; o resto continua Intel One Mono */
+@font-face {
+    font-family: "Intel One Mono";
+    font-weight: 400;
+    font-style: normal;
+    src: local("Consolas"), local("Menlo"), local("DejaVu Sans Mono"), local("Courier New");
+    unicode-range: U+00C0-00FF;
+}
+
+@font-face {
+    font-family: "Intel One Mono";
+    font-weight: 700;
+    font-style: normal;
+    src: local("Consolas Bold"), local("Consolas-Bold"), local("Menlo Bold"), local("Menlo-Bold"),
+         local("DejaVu Sans Mono Bold"), local("Courier New Bold");
+    unicode-range: U+00C0-00FF;
+}
+/* Título: "Bem-vindo ao seu calendário, [PERFIL]." */
+html:root #secao-principal h1 {
+    line-height: 1.25 !important;
+    padding-top: 0.1em !important;
+    overflow: visible !important;
+    text-rendering: optimizeLegibility !important;
+}
+/* Letras acentuadas em fonte com acentos corretos; o resto continua Intel One Mono */
+html:root:root :is(
+    #secao-principal h1,
+    #secao-principal .welcome-text,
+    #overlay-assistente .overlay-caixa,
+    #overlay-assistente .overlay-caixa *,
+    #overlay-perfil .perfil-saudacao,
+    #overlay-perfil .perfil-opcao,
+    .botao-cabecalho .rotulo
+) {
+    font-family: "IBM Plex Mono", "Intel One Mono", monospace !important;
+}
+
+/* Espaço para o acento nas bolhas do chat */
+html:root #chat-assistente .mensagem p {
+    line-height: 1.45 !important;
+    padding: 9px 8px !important;
+    overflow: visible !important;
+}
+
+/* Seta do Assistente StudyFlow - modo claro e escuro */
+#form-pergunta-assistente button {
+    font-size: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#form-pergunta-assistente button::after {
+    content: "➤";
+    font-family: Arial, sans-serif;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 1;
+}
+
+/* Adicionar Compromisso - tamanho no mobile */
+@media (max-width: 700px) {
+
+    #overlay-adicionar-compromisso .overlay-caixa {
+        width: min(320px, calc(100vw - 24px)) !important;
+        height: min(570px, calc(100dvh - 24px)) !important;
+
+        min-height: 0 !important;
+        max-height: calc(100dvh - 24px) !important;
+
+        border-radius: 40px !important;
+        box-sizing: border-box !important;
+
+        overflow-y: auto !important;
+    }
+
+    /* Título do compromisso */
+    #overlay-adicionar-compromisso .overlay-topo h2 {
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+    }
+
+    /* Ícone do lápis */
+    #overlay-adicionar-compromisso .icone-editar {
+        width: 24px !important;
+        height: 24px !important;
+    }
+}
+
+/* Assistente StudyFlow - layout mobile */
+@media (max-width: 700px) {
+
+    #overlay-assistente .overlay-caixa {
+        width: min(320px, calc(100vw - 24px)) !important;
+        height: min(550px, calc(100dvh - 24px)) !important;
+        min-height: 0 !important;
+        max-height: calc(100dvh - 24px) !important;
+        border-radius: 32px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        padding: 16px 12px !important;
+    }
+
+    /* Cabeçalho */
+    #overlay-assistente .overlay-topo {
+        position: relative !important;
+        padding: 18px 10px 12px !important;
+        min-width: 0 !important;
+    }
+
+    #overlay-assistente .overlay-topo h2 {
+        font-size: 20px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        white-space: normal !important;
+        overflow-wrap: normal !important;
+        margin: 0 !important;
+    }
+
+    /* Botão fechar */
+    #overlay-assistente .botao-fechar {
+        top: 0 !important;
+        right: 0 !important;
+    }
+
+    /* Conversa */
+    #overlay-assistente #chat-assistente {
+        min-width: 0 !important;
+        width: 100% !important;
+        flex: 1 1 auto !important;
+        overflow-y: auto !important;
+    }
+
+    #overlay-assistente .mensagem {
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    #overlay-assistente .mensagem p {
+        max-width: 100% !important;
+        overflow-wrap: anywhere !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Barra inferior */
+    #overlay-assistente #form-pergunta-assistente {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+    }
+}
+/* Salvar sempre visível no modal de compromisso (celular) */
+@media (max-width: 700px) {
+
+    /* Descrição um pouco menor, para o formulário caber na tela */
+    #form-adicionar-compromisso textarea {
+        height: 185px;
+    }
+
+    /* Botão fixo no rodapé do modal, mesmo que ainda haja rolagem */
+    #form-adicionar-compromisso .botao-salvar {
+        position: sticky;
+        bottom: 12px;
+        z-index: 5;
+        margin-top: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+}/* Assistente: tudo numa tela só, sem rolagem (celular) */
+@media (max-width: 700px) {
+
+    /* Modal com altura automática (cabe o conteúdo) */
+    #overlay-assistente .overlay-caixa {
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 12px 12px 14px !important;
+    }
+
+    /* Título menor, numa linha só */
+    #overlay-assistente .overlay-topo {
+        padding: 16px 0 0 !important;
+        margin-bottom: 6px !important;
+    }
+
+    #overlay-assistente .overlay-topo h2 {
+        min-height: 0 !important;
+        font-size: clamp(14px, 5vw, 19px) !important;
+        line-height: 1.25 !important;
+        white-space: nowrap !important;
+    }
+
+    /* Chat sem altura fixa e com espaços menores */
+    html:root #overlay-assistente #chat-assistente {
+        height: auto !important;
+        min-height: 0 !important;
+        flex: 1 1 auto !important;
+        gap: 8px !important;
+        padding: 8px 10px !important;
+        overflow-y: auto;
+    }
+
+    #chat-assistente .mensagem {
+        gap: 3px !important;
+    }
+
+    /* Etiquetas PERFIL / ASSISTENTE */
+    #chat-assistente .remetente {
+        width: 68px !important;
+        height: 22px !important;
+        font-size: 10px !important;
+        border-radius: 8px !important;
+    }
+
+    #chat-assistente .mensagem-usuario .remetente {
+        margin-right: 30px !important;
+    }
+
+    #chat-assistente .mensagem-assistente .remetente {
+        margin-left: 30px !important;
+    }
+
+    /* Ícones menores */
+    #chat-assistente .icone-usuario,
+    #chat-assistente .icone-robo {
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    /* Bolhas menores, com folga para os acentos */
+    html:root #overlay-assistente #chat-assistente .mensagem p {
+        min-height: 0 !important;
+        font-size: 10.5px !important;
+        line-height: 1.4 !important;
+        padding: 6px 8px !important;
+    }
+
+    /* Barra de pergunta */
+    #overlay-assistente .barra-pergunta {
+        margin-top: 6px !important;
+    }
+}
+/* Modal de compromisso: tudo numa tela só, sem rolagem (celular) */
+@media (max-width: 700px) {
+
+    /* Modal com altura automática */
+    #overlay-adicionar-compromisso .overlay-caixa {
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 14px 14px 14px !important;
+    }
+
+    /* Título numa linha só (títulos longos terminam em "...") */
+    #overlay-adicionar-compromisso .overlay-topo {
+        padding: 8px 38px 0 !important;
+        margin-bottom: 12px !important;
+    }
+
+    html:root #overlay-adicionar-compromisso .overlay-topo h2 {
+        min-height: 0 !important;
+        font-size: clamp(15px, 4.8vw, 19px) !important;
+        line-height: 1.4 !important;
+        padding-top: 0.1em !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Formulário mais compacto */
+    #form-adicionar-compromisso {
+        row-gap: 10px !important;
+    }
+
+    html:root #form-adicionar-compromisso .campo label {
+        font-size: 15px !important;
+        line-height: 20px !important;
+    }
+
+    html:root #form-adicionar-compromisso .campo input,
+    html:root #form-adicionar-compromisso .campo select {
+        height: 26px !important;
+        font-size: 14px !important;
+    }
+
+    /* Descrição alinhada à esquerda, sem recuo */
+    html:root #form-adicionar-compromisso .campo-descricao {
+        margin: 12px 0 0 !important;
+    }
+
+    html:root #form-adicionar-compromisso .campo-descricao label {
+        width: auto !important;
+        height: auto !important;
+        margin: 0 0 4px !important;
+        justify-content: flex-start !important;
+        font-size: 15px !important;
+    }
+
+    html:root #form-adicionar-compromisso textarea {
+        height: 150px !important;
+        padding: 10px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Salvar */
+    html:root #form-adicionar-compromisso .botao-salvar {
+        margin-top: 10px !important;
+    }
+}
+/* Modal de compromisso: tudo numa tela só, sem rolagem (celular) */
+@media (max-width: 700px) {
+
+    /* Modal com altura automática */
+    #overlay-adicionar-compromisso .overlay-caixa {
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 14px 14px 14px !important;
+    }
+
+    /* Título numa linha só (títulos longos terminam em "...") */
+    #overlay-adicionar-compromisso .overlay-topo {
+        padding: 8px 38px 0 !important;
+        margin-bottom: 12px !important;
+    }
+
+    html:root #overlay-adicionar-compromisso .overlay-topo h2 {
+        min-height: 0 !important;
+        font-size: clamp(15px, 4.8vw, 19px) !important;
+        line-height: 1.4 !important;
+        padding-top: 0.1em !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Formulário mais compacto */
+    #form-adicionar-compromisso {
+        row-gap: 10px !important;
+    }
+
+    html:root #form-adicionar-compromisso .campo label {
+        font-size: 15px !important;
+        line-height: 20px !important;
+    }
+
+    html:root #form-adicionar-compromisso .campo input,
+    html:root #form-adicionar-compromisso .campo select {
+        height: 26px !important;
+        font-size: 14px !important;
+    }
+
+    /* Descrição alinhada à esquerda, sem recuo */
+    html:root #form-adicionar-compromisso .campo-descricao {
+        margin: 12px 0 0 !important;
+    }
+
+    html:root #form-adicionar-compromisso .campo-descricao label {
+        width: auto !important;
+        height: auto !important;
+        margin: 0 0 4px !important;
+        justify-content: flex-start !important;
+        font-size: 15px !important;
+    }
+
+    html:root #form-adicionar-compromisso textarea {
+        height: 150px !important;
+        padding: 10px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Salvar */
+    html:root #form-adicionar-compromisso .botao-salvar {
+        margin-top: 10px !important;
+    }
+}
+/* Editar Perfil: layout compacto, tudo numa tela só (celular) */
+@media (max-width: 700px) {
+
+    /* Modal com altura automática */
+    html:root #overlay-editar-perfil .overlay-caixa {
+        width: min(340px, calc(100vw - 24px)) !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: calc(100dvh - 24px) !important;
+        padding: 16px 18px !important;
+        border-radius: 30px !important;
+        overflow-y: auto !important;
+    }
+
+    /* Título e X na mesma linha */
+    html:root #overlay-editar-perfil .overlay-topo {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 28px !important;
+        margin: 0 0 12px !important;
+        padding: 0 !important;
+    }
+
+    html:root #overlay-editar-perfil .overlay-topo h2 {
+        font-size: clamp(16px, 5.2vw, 20px) !important;
+        line-height: 1.4 !important;
+        padding-top: 0.1em !important;
+        white-space: nowrap !important;
+    }
+
+    html:root #overlay-editar-perfil .botao-fechar {
+        top: 50% !important;
+        right: 0 !important;
+        transform: translateY(-50%) !important;
+    }
+
+    /* Formulário em uma coluna, sem recuos */
+    html:root #form-editar-perfil {
+        grid-template-columns: minmax(0, 1fr) !important;
+        row-gap: 10px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Avatar menor, centralizado */
+    html:root #form-editar-perfil .editar-perfil-foto {
+        padding: 0 !important;
+        gap: 6px !important;
+    }
+
+    html:root #form-editar-perfil .icone-foto {
+        width: 84px !important;
+        height: 84px !important;
+    }
+
+    html:root #form-editar-perfil .link-trocar-foto {
+        font-size: 12px !important;
+    }
+
+    /* Dados: rótulo à esquerda, campo à direita */
+    html:root #form-editar-perfil .editar-perfil-dados {
+        gap: 6px !important;
+        padding-top: 0 !important;
+    }
+
+    html:root #form-editar-perfil .dado-perfil {
+        font-size: 12px !important;
+    }
+
+    html:root #form-editar-perfil .campo-linha {
+        grid-template-columns: 92px minmax(0, 1fr) !important;
+        gap: 8px !important;
+        min-height: 0 !important;
+    }
+
+    html:root #form-editar-perfil .campo-linha label {
+        font-size: 12px !important;
+        white-space: nowrap !important;
+    }
+
+    html:root #form-editar-perfil .campo-linha input {
+        height: 26px !important;
+        min-height: 0 !important;
+        font-size: 10px !important;
+    }
+
+    /* Cancelar e Salvar no rodapé, à direita */
+    html:root #form-editar-perfil .acoes-formulario {
+        justify-content: flex-end !important;
+        gap: 10px !important;
+        margin: 0 !important;
+        padding: 4px 0 0 !important;
+        transform: none !important;
+    }
+
+    html:root #form-editar-perfil .botao-cancelar {
+        padding: 6px !important;
+        font-size: 12px !important;
+    }
+
+    html:root #form-editar-perfil .botao-salvar {
+        min-width: 72px !important;
+        min-height: 28px !important;
+        padding: 4px 14px !important;
+        font-size: 12px !important;
+    }
+}
+/* Editar Perfil: igual ao design de 637 x 372 (desktop, claro e escuro) */
+@media (min-width: 701px) {
+
+    html:root #overlay-editar-perfil .overlay-caixa {
+        position: relative !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* Título e X posicionados em relação ao modal */
+    html:root #overlay-editar-perfil .overlay-topo {
+        position: static !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    html:root #overlay-editar-perfil .overlay-topo h2 {
+        position: absolute !important;
+        top: 16px !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        font-size: 40px !important;
+        line-height: 48px !important;
+        text-align: center !important;
+    }
+
+    html:root #overlay-editar-perfil .botao-fechar {
+        top: 16px !important;
+        right: 20px !important;
+    }
+
+    /* Formulário sem recuos: os elementos usam posição fixa no modal */
+    html:root #form-editar-perfil {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Avatar e "Trocar foto de perfil" */
+    html:root #form-editar-perfil .editar-perfil-foto {
+        display: contents !important;
+    }
+
+    html:root #form-editar-perfil .icone-foto {
+        position: absolute !important;
+        left: 70px !important;
+        top: 121px !important;
+        width: 150px !important;
+        height: 150px !important;
+        margin: 0 !important;
+    }
+
+    html:root #form-editar-perfil .link-trocar-foto {
+        position: absolute !important;
+        left: 47px !important;
+        top: 309px !important;
+        width: 192px !important;
+        font-size: 15px !important;
+        line-height: 20px !important;
+        text-align: center !important;
+    }
+
+    /* Nome, e-mail e campos */
+    html:root #form-editar-perfil .editar-perfil-dados {
+        position: absolute !important;
+        left: 298px !important;
+        top: 103px !important;
+        width: 272px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        padding: 0 !important;
+    }
+
+    html:root #form-editar-perfil .dado-perfil {
+        font-size: 15px !important;
+        font-weight: 400 !important;
+        line-height: 20px !important;
+    }
+
+    html:root #form-editar-perfil .campo-linha {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        height: 30px !important;
+        min-height: 0 !important;
+        width: 100% !important;
+    }
+
+    html:root #form-editar-perfil .campo-linha label {
+        flex: 0 0 auto !important;
+        font-size: 15px !important;
+        font-weight: 400 !important;
+        white-space: nowrap !important;
+    }
+
+    html:root #form-editar-perfil .campo-linha input {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        min-width: 0 !important;
+        height: 30px !important;
+        min-height: 0 !important;
+        font-size: 11px !important;
+    }
+
+    /* Cancelar e Salvar */
+    html:root #form-editar-perfil .acoes-formulario {
+        position: absolute !important;
+        right: 23px !important;
+        bottom: 20px !important;
+        margin: 0 !important;

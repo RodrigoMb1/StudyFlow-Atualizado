@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyFlow</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+
+<body>
+    <input type="checkbox" id="toggle-menu" class="toggle-overlay">
+    <input type="checkbox" id="toggle-notificacoes" class="toggle-overlay">
+    <input type="checkbox" id="toggle-perfil" class="toggle-overlay">
+    <input type="checkbox" id="toggle-editar-perfil" class="toggle-overlay">
+    <input type="checkbox" id="toggle-adicionar" class="toggle-overlay">
+    <input type="checkbox" id="toggle-assistente" class="toggle-overlay">
+    <input type="checkbox" id="toggle-tema" class="toggle-overlay">
+
+    <header id="cabecalho">
+        <label for="toggle-menu" class="logo">StudyFlow<span class="sr-only">: abrir ou fechar o menu</span></label>
+
+        <div class="cabecalho-acoes">
+            <label for="toggle-notificacoes" class="botao-cabecalho">
+                <img src="./assets/icons%20svg/notification%20icon.svg" alt="" class="icone" aria-hidden="true">
+                <span class="rotulo">Notificações</span>
+            </label>
+
+            <label for="toggle-perfil" class="botao-cabecalho botao-perfil">
+                <img src="./assets/icons%20svg/user%20icon.svg" alt="" class="icone" aria-hidden="true">
+                <span class="rotulo">[Perfil]</span>
+            </label>
+        </div>
+    </header>
+
+    <main id="conteudo-principal">
+        <section id="secao-principal">
+            <h1>Bem-vindo ao seu calendário, [PERFIL].</h1>
+            <p class="welcome-text">Organize sua rotina, acompanhe seus compromissos e não deixe nenhum prazo passar</p>
+            <div class="assistant-wrapper">
+                <span>O que você gostaria de saber?</span>
+                <p>Pergunte a seu assistente sobre sua rotina acadêmica...</p>
+                <input type="text" placeholder="Ex.: O que eu tenho de compromisso hoje?" aria-label="Pergunte ao seu assistente">
+                <label for="toggle-assistente" class="btn-assistant-send" aria-label="Abrir assistente">&#10148;</label>
+            </div>
+        </section>
+
+        <section id="calendario" aria-labelledby="titulo-calendario">
+            <div class="calendario-topo">
+                <h2 id="titulo-calendario">Calendário</h2>
+                <label for="toggle-adicionar" class="botao-adicionar">+ Adicionar compromisso</label>
+            </div>
+
+            <div class="calendario-caixa">
+                <div class="calendario-mes">
+                    <button type="button" class="seta" id="mes-anterior" aria-label="Mês anterior">&larr;</button>
+                    <h3 id="mes-ano" aria-live="polite">Agosto - 2026</h3>
+                    <button type="button" class="seta" id="mes-seguinte" aria-label="Próximo mês">&rarr;</button>
+                </div>
+
+                <table class="calendario-grade" aria-labelledby="mes-ano">
+                    <thead>
+                        <tr>
+                            <th scope="col" abbr="Domingo">DOM</th>
+                            <th scope="col" abbr="Segunda-feira">SEG</th>
+                            <th scope="col" abbr="Terça-feira">TER</th>
+                            <th scope="col" abbr="Quarta-feira">QUA</th>
+                            <th scope="col" abbr="Quinta-feira">QUI</th>
+                            <th scope="col" abbr="Sexta-feira">SEX</th>
+                            <th scope="col" abbr="Sábado">SÁB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><button type="button" class="dia" data-data="2026-08-01" aria-label="1 de agosto de 2026">1</button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="dia" data-data="2026-08-02" aria-label="2 de agosto de 2026">2</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-03" aria-label="3 de agosto de 2026">3</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-04" aria-label="4 de agosto de 2026">4</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-05" aria-label="5 de agosto de 2026">5</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-06" aria-label="6 de agosto de 2026">6</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-07" aria-label="7 de agosto de 2026">7</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-08" aria-label="8 de agosto de 2026">8</button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="dia" data-data="2026-08-09" aria-label="9 de agosto de 2026">9</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-10" aria-label="10 de agosto de 2026">10</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-11" aria-label="11 de agosto de 2026">11</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-12" aria-label="12 de agosto de 2026">12</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-13" aria-label="13 de agosto de 2026">13</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-14" aria-label="14 de agosto de 2026">14</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-15" aria-label="15 de agosto de 2026">15</button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="dia" data-data="2026-08-16" aria-label="16 de agosto de 2026">16</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-17" aria-label="17 de agosto de 2026">17</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-18" aria-label="18 de agosto de 2026">18</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-19" aria-label="19 de agosto de 2026">19</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-20" aria-label="20 de agosto de 2026">20</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-21" aria-label="21 de agosto de 2026">21</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-22" aria-label="22 de agosto de 2026">22</button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="dia" data-data="2026-08-23" aria-label="23 de agosto de 2026">23</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-24" aria-label="24 de agosto de 2026">24</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-25" aria-label="25 de agosto de 2026">25</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-26" aria-label="26 de agosto de 2026">26</button></td>
+                            <td><button type="button" class="dia dia-hoje" data-data="2026-08-27" aria-label="27 de agosto de 2026">27</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-28" aria-label="28 de agosto de 2026">28</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-29" aria-label="29 de agosto de 2026">29</button></td>
+                        </tr>
+                        <tr>
+                            <td><button type="button" class="dia" data-data="2026-08-30" aria-label="30 de agosto de 2026">30</button></td>
+                            <td><button type="button" class="dia" data-data="2026-08-31" aria-label="31 de agosto de 2026">31</button></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <aside id="painel-compromissos-hoje">
+            <h2>Compromissos de hoje</h2>
+            <ul class="appointments-list">
+                <li class="appointment-item">
+                    <input type="checkbox" id="concluir-1" class="checkbox-concluir">
+                    <span class="appointment-text">08:00 - Microfundamento 1: Entrega de trabalho</span>
+                    <label for="concluir-1" class="btn-concluir">[CONCLUIR]</label>
+                </li>
+                <li class="appointment-item">
+                    <input type="checkbox" id="concluir-2" class="checkbox-concluir">
+                    <span class="appointment-text">10:30 - Reunião do Grupo: Projeto 1 - Word</span>
+                    <label for="concluir-2" class="btn-concluir">[CONCLUIR]</label>
+                </li>
+                <li class="appointment-item">
+                    <input type="checkbox" id="concluir-3" class="checkbox-concluir">
+                    <span class="appointment-text">14:00 - Academia: Treino de Pernas</span>
+                    <label for="concluir-3" class="btn-concluir">[CONCLUIR]</label>
+                </li>
+            </ul>
+            <!-- Fixo na etapa 3, pois iremos mexer na etapa 4 com JS -->
+            <p class="progress-tracker">Progresso: 0/3 concluídas</p>
+        </aside>
+    </main>
+
+    <div id="overlay-menu" class="overlay">
+        <nav class="overlay-nav" aria-label="Menu principal">
+            <ul>
+                <li><a href="#cabecalho">Início</a></li>
+                <li><a href="#painel-compromissos-hoje">Compromissos de hoje</a></li>
+                <li><label for="toggle-adicionar">Adicionar compromisso</label></li>
+                <li><label for="toggle-tema">Modo claro/escuro</label></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="overlay-notificacoes" class="overlay">
+        <button type="button" class="marcar-lidas">Marcar todas como lidas</button>
+        <ul class="notifications-list">
+            <li class="notification-item">Nova tarefa lançada no Canvas: Microfundamento 1 - Entrega de trabalho</li>
+            <li class="notification-item">Compromisso em 30 minutos: Reunião do Grupo</li>
+            <li class="notification-item">Lembrete: Academia às 18h</li>
+        </ul>
+    </div>
+
+    <div id="overlay-perfil" class="overlay">
+        <nav class="perfil-caixa" aria-label="Menu do perfil">
+            <p class="perfil-saudacao">Olá, <strong>[Perfil]</strong></p>
+            <label for="toggle-editar-perfil" class="perfil-opcao perfil-editar">Editar perfil</label>
+            <a href="login.html" class="perfil-opcao perfil-sair">Sair</a>
+        </nav>
+    </div>
+
+    <div id="overlay-adicionar-compromisso" class="overlay">
+        <label for="toggle-adicionar" class="overlay-fundo" aria-label="Fechar"></label>
+
+        <div class="overlay-caixa">
+            <div class="overlay-topo">
+                <img src="./assets/icons%20svg/edit%20icon.svg" alt="" class="icone-editar" aria-hidden="true">
+                <h2>[Título do compromisso]</h2>
+                <label for="toggle-adicionar" class="botao-fechar" aria-label="Fechar">
+                    <img src="./assets/icons%20svg/closed%20icon.svg" alt="" aria-hidden="true">
+                </label>
+            </div>
+
+            <form id="form-adicionar-compromisso">
+                <div class="campo">
+                    <label for="input-data">Data:</label>
+                    <input type="date" id="input-data" name="data">
+                </div>
+
+                <div class="campo">
+                    <label for="input-horario">Horário:</label>
+                    <input type="time" id="input-horario" name="horario">
+                </div>
+
+                <div class="campo">
+                    <label for="input-categoria">Categoria:</label>
+                    <input type="text" id="input-categoria" name="categoria">
+                </div>
+
+                <div class="campo">
+                    <label for="input-repetir">Repetir:</label>
+                    <select id="input-repetir" name="repetir">
+                        <option value="nao-repetir">Não repetir</option>
+                        <option value="diariamente">Diariamente</option>
+                        <option value="semanalmente">Semanalmente</option>
+                        <option value="mensalmente">Mensalmente</option>
+                    </select>
+                </div>
+
+                <div class="campo campo-descricao">
+                    <label for="input-descricao">Descrição</label>
+                    <textarea id="input-descricao" name="descricao" placeholder="[Descrição do compromisso...]"></textarea>
+                </div>
+
+                <button type="submit" class="botao-salvar">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="overlay-editar-perfil" class="overlay">
+        <label for="toggle-editar-perfil" class="overlay-fundo" aria-label="Fechar"></label>
+
+        <div class="overlay-caixa caixa-editar-perfil">
+            <div class="overlay-topo">
+                <h2>Editar Perfil</h2>
+                <label for="toggle-editar-perfil" class="botao-fechar" aria-label="Fechar">
+                    <img src="./assets/icons%20svg/closed%20icon.svg" alt="" aria-hidden="true">
+                </label>
+            </div>
+
+            <form id="form-editar-perfil">
+                <div class="editar-perfil-foto">
+                    <img src="./assets/icons%20svg/user%20icon.svg" alt="" class="icone-foto" aria-hidden="true">
+                    <label for="input-foto" class="link-trocar-foto">Trocar foto de perfil</label>
+                    <input type="file" id="input-foto" class="sr-only" accept="image/png, image/jpeg, image/webp">
+                </div>
+
+                <div class="editar-perfil-dados">
+                    <p class="dado-perfil">Nome: <span class="dado-valor">[PERFIL]</span></p>
+
+                    <div class="campo campo-linha">
+                        <label for="input-novo-nome">Trocar nome:</label>
+                        <input type="text" id="input-novo-nome" placeholder="inserir novo nome..." autocomplete="name" minlength="3" maxlength="80">
+                    </div>
+
+                    <p class="dado-perfil">Email: <span class="dado-valor">[EMAIL]</span></p>
+
+                    <div class="campo campo-linha">
+                        <label for="input-nova-senha">Nova senha:</label>
+                        <input type="password" id="input-nova-senha" placeholder="inserir nova senha..." autocomplete="new-password" minlength="8">
+                    </div>
+                </div>
+
+                <div class="acoes-formulario">
+                    <label for="toggle-editar-perfil" class="botao-cancelar">Cancelar</label>
+                    <button type="button" class="botao-salvar">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="overlay-assistente" class="overlay">
+        <label for="toggle-assistente" class="overlay-fundo" aria-label="Fechar"></label>
+
+        <div class="overlay-caixa">
+            <div class="overlay-topo">
+                <h2>Assistente StudyFlow</h2>
+                <label for="toggle-assistente" class="botao-fechar" aria-label="Fechar">
+                    <img src="./assets/icons%20svg/closed%20icon.svg" alt="" aria-hidden="true">
+                </label>
+            </div>
+
+            <div id="chat-assistente" class="chat">
+
+                <div class="mensagem mensagem-usuario">
+                    <span class="remetente">
+                        [PERFIL]
+                        <img src="./assets/icons%20svg/user%20icon.svg" alt="" class="icone-usuario" aria-hidden="true">
+                    </span>
+                    <p>O que eu tenho de compromisso hoje?</p>
+                </div>
+
+                <div class="mensagem mensagem-assistente">
+                    <span class="remetente">
+                        <img src="./assets/icons%20svg/robot%20icon.svg" alt="" class="icone-robo" aria-hidden="true">
+                        Assistente
+                    </span>
+                    <p>Você tem 3 compromissos hoje: 08:00 Microfundamento 1, 10:30 Reunião do Grupo, 14:00 Academia.</p>
+                </div>
+
+                <div class="mensagem mensagem-usuario">
+                    <span class="remetente">
+                        [PERFIL]
+                        <img src="./assets/icons%20svg/user%20icon.svg" alt="" class="icone-usuario" aria-hidden="true">
+                    </span>
+                    <p>A sim, adiciona academia amanhã pra 21h</p>
+                </div>
+
+                <div class="mensagem mensagem-assistente">
+                    <span class="remetente">
+                        <img src="./assets/icons%20svg/robot%20icon.svg" alt="" class="icone-robo" aria-hidden="true">
+                        Assistente
+                    </span>
+                    <p>Pronto! Adicionei 'Academia' para amanhã às 21h00.</p>
+                </div>
+
+            </div>
+
+            <form id="form-pergunta-assistente" class="barra-pergunta">
+                <label for="input-pergunta-assistente" class="sr-only">O que você gostaria de saber?</label>
+                <input type="text" id="input-pergunta-assistente" name="pergunta" placeholder="Pergunte a seu assistente">
+                <button type="submit" aria-label="Enviar pergunta">&#10148;</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
